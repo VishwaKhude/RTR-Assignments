@@ -1,4 +1,5 @@
 #include <stdio.h>
+
 int main(void)
 {
 	//function prototypes (Function_call)
@@ -15,12 +16,12 @@ int main(void)
 	scanf("%u",&a);
 
 	printf("\n\n");
-	printf("By How Mnay Bits Do You Want to shift A = % To The Right ? ", a);
+	printf("By How Many Bits Do You Want to shift A = % To The Right ? ", a);
 	scanf("%u",&num_bits);
 
 	printf("\n\n\n\n");
 	result = a >> num_bits;
-	printf("Bitwise RIGHT-SHIFTing A = %d By %d Bits \n Gives The Result = %d (Decimal) \n\n", num_bits, a, result);
+	printf("Bitwise RIGHT-SHIFTing A = %d By %d Bits \n Gives The Result = %d (Decimal) \n\n", a, num_bits, result);
 	PrintBinaryFormOfNumber(a);
 	PrintBinaryFormOfNumber(result);
 
