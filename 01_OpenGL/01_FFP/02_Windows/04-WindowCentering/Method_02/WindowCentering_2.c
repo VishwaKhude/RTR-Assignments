@@ -11,12 +11,13 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmdLi
 	// Local Variable Declarations
 	WNDCLASSEX wndclass;  // (wndclass)window, class(type), type or class of window EX(WND(window) Extended)
 	HWND hwnd;            //handle window (Unsigned Int)
+	HDC hdcPrimaryMonitor;
 	MSG msg;             // struct
 	TCHAR szAppName[] = TEXT(" VMKWindow "); // szAppName - Zero Terminated String To App-Name ('\0'), TEXT (macro)
 											 // TEXT(macro) - similar to 'printf'
 	int WindowWidth = 800;
 	int WindowHeight = 600;
-	int hdcPrimaryMointor = GetDC(NULL);
+	hdcPrimaryMonitor = GetDC(NULL);
 	int ScreenWidth = GetDeviceCaps( hdcPrimaryMonitor, HORZRES);
 	int ScreenHeight = GetDeviceCaps( hdcPrimaryMonitor, VERTRES);
 
