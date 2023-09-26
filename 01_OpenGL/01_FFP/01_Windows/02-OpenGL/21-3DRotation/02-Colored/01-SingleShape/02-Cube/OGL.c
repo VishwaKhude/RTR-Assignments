@@ -409,7 +409,7 @@ void update(void)
 {
 	// Code
 	cangle = cangle - 0.1f;
-	if (cangle >= 360.0f);
+	if (cangle >= 360.0f)
 	cangle = cangle + 360.0f;
 }
 

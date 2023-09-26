@@ -364,7 +364,7 @@ void update(void)
 {
 	// Code
 	rangle = rangle + 0.2f;
-	if (rangle <= 360.0f);
+	if (rangle <= 360.0f)
 	rangle = rangle - 360.0f;
 }
 

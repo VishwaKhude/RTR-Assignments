@@ -457,7 +457,7 @@ void update(void)
 	pangle = pangle - 360.0f;
 
 	cangle = cangle - 0.15f;
-	if (cangle >= 360.0f);
+	if (cangle >= 360.0f)
 	cangle = cangle - 360.0f;
 }
 

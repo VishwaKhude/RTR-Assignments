@@ -396,7 +396,7 @@ void update(void)
 {
 	// Code
 	pangle = pangle + 0.15f;
-	if (pangle >= 360.0f);
+	if (pangle >= 360.0f)
 	pangle = pangle - 360.0f;
 }
 

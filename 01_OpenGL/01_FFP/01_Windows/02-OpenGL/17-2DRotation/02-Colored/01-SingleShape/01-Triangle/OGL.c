@@ -369,7 +369,7 @@ void update(void)
 {
 	// Code
 	tangle = tangle + 0.2f;
-	if (tangle <= 360.0f);
+	if (tangle <= 360.0f)
 	tangle = tangle - 360.0f;
 }
 
