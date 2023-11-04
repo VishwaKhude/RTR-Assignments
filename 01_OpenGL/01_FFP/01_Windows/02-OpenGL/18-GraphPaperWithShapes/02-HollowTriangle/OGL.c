@@ -2,9 +2,11 @@
 // Common Windows Header Files
 #include <windows.h>		  // same as <stdio.h> library function, // includes around 3,50,000 API's, Win32 API
 #include <stdio.h>            // For File I/O
-#include <stdlib.h>           // For exit()				
+#include <stdlib.h>           // For exit()	
 
-float f;
+// For Loops
+int a;
+int b;
 
 // OpenGl Header Files
 #include <gl/GL.h> // '\' also works
@@ -345,22 +347,152 @@ void display(void)
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
 
-	glTranslatef(0.0f, 0.0f, -3.0f); // -3.0f means towards the screen on z-axis (-)on z-axis
+	glTranslatef(0.0f, 0.0f, -3.8f); // -3.0f means towards the screen on z-axis (-)on z-axis
 
-	glBegin(GL_LINES);
+	GLfloat x1 = -5.20f;
+	GLfloat x2 = 3.20f;
 
+	GLfloat y1 = 0.0f;
+	GLfloat y2 = 0.0f;
 	glColor3f(0.0f, 0.0f, 1.0f);
 
-	for (float f = 2.18f; f >= -2.18f; f = f - 0.04f)
+	for (int a = 0; a <= 40; a++)
 	{
-		glVertex3f(f, 1.25f, 0.0f);
-		glVertex3f(f, -1.25f, 0.0f);
+		if (a % 5 == 0)
+		{
+			glLineWidth(2.0f);
+		}
 
-		glVertex3f(f, 1.25f, 0.0f);
-		glVertex3f(f, -1.25f, 0.0f);
+		else
+		{
+			glLineWidth(1.0f);
+		}
+
+		glBegin(GL_LINES);
+
+		glVertex3f(x1, y1, 0.0f);
+		glVertex3f(x2, y2, 0.0f);
+
+		glEnd();
+
+		y1 = y1 + 0.0385;
+		y2 = y2 + 0.0385;
+
 	}
-		
-		
+
+	GLfloat x_1 = -5.20f;
+	GLfloat x_2 = 3.20f;
+
+	GLfloat y_1 = 0.0f;
+	GLfloat y_2 = 0.0f;
+
+	for (int a = 0; a <= 40; a++)
+	{
+		if (a % 5 == 0)
+		{
+			glLineWidth(2.0f);
+		}
+
+		else
+		{
+			glLineWidth(1.0f);
+		}
+
+		glBegin(GL_LINES);
+
+		glVertex3f(x_1, y_1, 0.0f);
+		glVertex3f(x_2, y_2, 0.0f);
+
+		glEnd();
+
+		y_1 = y_1 - 0.0385;
+		y_2 = y_2 - 0.0385;
+
+	}
+
+	GLfloat x1v = 0.0f;
+	GLfloat x2v = 0.0f;
+
+	GLfloat y1v = -5.20f;
+	GLfloat y2v = 3.20f;
+	glColor3f(0.0f, 0.0f, 1.0f);
+
+	for (int a = 0; a <= 40; a++)
+	{
+		if (a % 5 == 0)
+		{
+			glLineWidth(2.0f);
+		}
+
+		else
+		{
+			glLineWidth(1.0f);
+		}
+
+		glBegin(GL_LINES);
+
+		glVertex3f(x1v, y1v, 0.0f);
+		glVertex3f(x2v, y2v, 0.0f);
+
+		glEnd();
+
+		x1v = x1v + 0.0680;
+		x2v = x2v + 0.0680;
+
+	}
+
+	GLfloat x_1ve = 0.0f;
+	GLfloat x_2ve = 0.0f;
+
+	GLfloat y_1ve = -5.20f;
+	GLfloat y_2ve = 3.20f;
+
+	for (int a = 0; a <= 40; a++)
+	{
+		if (a % 5 == 0)
+		{
+			glLineWidth(2.0f);
+		}
+
+		else
+		{
+			glLineWidth(1.0f);
+		}
+
+		glBegin(GL_LINES);
+
+		glVertex3f(x_1ve, y_1ve, 0.0f);
+		glVertex3f(x_2ve, y_2ve, 0.0f);
+
+		glEnd();
+
+		x_1ve = x_1ve - 0.0680;
+		x_2ve = x_2ve - 0.0680;
+
+	}
+
+
+	glLineWidth(2.0f);
+	glBegin(GL_LINES);
+	glColor3f(1.0f, 0.0f, 0.0f);
+	glVertex3f(0.0f, 2.20f, 0.0f);
+	glVertex3f(0.0f, -2.20f, 0.0f);
+	glEnd();
+
+	glLineWidth(2.0f);
+	glBegin(GL_LINES);
+	glColor3f(0.0f, 1.0f, 0.0f);
+	glVertex3f(-3.20f, 0.0f, 0.0f);
+	glVertex3f(3.20f, 0.0f, 0.0f);
+	glEnd();
+	
+	glBegin(GL_LINE_LOOP);
+
+	//Triangle 1(right) vertex and colors
+	glColor3f(1.0f, 0.9f, 0.0f);
+	glVertex3f(0.0f, 1.0f, 0.0f); //apex vertex(upper)
+	glVertex3f(-1.0f, -1.0f, 0.0f); //left vertex
+	glVertex3f(1.0f, -1.0f, 0.0f); //right vertex 
 	glEnd();
 
 	SwapBuffers(ghdc);

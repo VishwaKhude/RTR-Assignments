@@ -2,9 +2,13 @@
 // Common Windows Header Files
 #include <windows.h>		  // same as <stdio.h> library function, // includes around 3,50,000 API's, Win32 API
 #include <stdio.h>            // For File I/O
-#include <stdlib.h>           // For exit()				
+#include <stdlib.h>           // For exit()		
 
-float f;
+#define _USE_MATH_DEFINES
+#include <math.h>
+
+// for-loop declaration
+int i;
 
 // OpenGl Header Files
 #include <gl/GL.h> // '\' also works
@@ -347,21 +351,72 @@ void display(void)
 
 	glTranslatef(0.0f, 0.0f, -3.0f); // -3.0f means towards the screen on z-axis (-)on z-axis
 
-	glBegin(GL_LINES);
-
-	glColor3f(0.0f, 0.0f, 1.0f);
-
-	for (float f = 2.18f; f >= -2.18f; f = f - 0.04f)
+	float scale = 1.0f;
+	for (i = 0; i < 10; i++)
 	{
-		glVertex3f(f, 1.25f, 0.0f);
-		glVertex3f(f, -1.25f, 0.0f);
+		glScalef(scale, scale, scale);
+		glBegin(GL_LINE_LOOP);
+		glColor3f(1.0f, 0.9f, 0.0f);
+		for (int i = 0; i < 100; i++)
+		{
+			float angle = 2.0f * M_PI * i / 100;
+			glVertex2f(1.0 * cos(angle), 1.0 * sin(angle));
+		}
+		scale -= 0.056f;
 
-		glVertex3f(f, 1.25f, 0.0f);
-		glVertex3f(f, -1.25f, 0.0f);
+		glEnd();
+
+		if (i == 0)
+		{
+			glColor3f(1.0f, 0.0f, 0.0f); //R
+		}
+
+		else if ( i == 1)
+		{
+			glColor3f(0.0f, 1.0f, 0.0f); //G
+		}
+
+		else if ( i == 2)
+		{
+			glColor3f(0.0f, 0.0f, 1.0f); //B
+		}
+
+		else if (i == 3)
+		{
+			glColor3f(0.5f, 1.0f, 1.0f); //C
+		}
+
+		else if (i == 4)
+		{
+			glColor3f(1.0f, 0.0f, 1.0f); //M
+		}
+
+		else if (i == 5)
+		{
+			glColor3f(1.0f, 1.0f, 0.0f); //Y
+		}
+
+		else if (i == 6)
+		{
+			glColor3f(1.0f, 1.0f, 1.0f); //W
+		}
+
+		else if (i == 7)
+		{
+			glColor3f(1.0f, 0.0f, 0.761f); //P
+		}
+
+		else if (i == 8)
+		{
+			glColor3f(1.0f, 0.843f, 1.0f); //LB
+		}
+
+		else if (i == 9)
+		{
+			glColor3f(1.0f ,0.529f, 0.0f); //O
+		}
+
 	}
-		
-		
-	glEnd();
 
 	SwapBuffers(ghdc);
 }

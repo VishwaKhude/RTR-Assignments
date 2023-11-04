@@ -4,14 +4,14 @@
 #include <stdio.h>            // For File I/O
 #include <stdlib.h>           // For exit()				
 
-float f;
-
 // OpenGl Header Files
 #include <gl/GL.h> // '\' also works
 
 #include <gl/glu.h>
 
 #include "OGL.h"		      // Our HeaderFile   
+
+int i;
 
 //Macros
 #define WIN_WIDTH 800
@@ -27,6 +27,8 @@ HGLRC ghrc = NULL;
 
 // Global Function Declarations (Global because called by OS, _far, _pascal)      
 LRESULT CALLBACK WndProc(HWND, UINT, WPARAM, LPARAM); // (WndProc(Window Procedure) - Hungarian(Charles Simonee) Notation used) (CALLBACK FUNCTIONS), (HWND - Handle Window), (WPARAM - 16 Bit), (LPARAM - 32Bit)
+
+float scale = 1.0f;
 
 // Global Variable Declarations
 FILE* gpfile = NULL;          //Global Pointer
@@ -328,17 +330,18 @@ void resize(int width, int height)
 	// Code
 	if (height <= 0)
 		height = 1;
-
+	
+	glViewport(0, 0, (GLsizei)width, (GLsizei)height); // 0x to 0y, total Width and Height of my window, binoculars
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
 
 	gluPerspective(45.0f, (GLfloat)width / (GLfloat)height, 0.1f, 100.0f);
 
-	glViewport(0, 0, (GLsizei)width, (GLsizei)height); // 0x to 0y, total Width and Height of my window, binoculars
 }
 
 void display(void)
 {
+	
 	// Code
 	glClear(GL_COLOR_BUFFER_BIT);
 
@@ -346,22 +349,73 @@ void display(void)
 	glLoadIdentity();
 
 	glTranslatef(0.0f, 0.0f, -3.0f); // -3.0f means towards the screen on z-axis (-)on z-axis
+	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
-	glBegin(GL_LINES);
+	scale = 1.0f;
+	for(i = 0; i < 10;  i++)
+	{	
+		
+		glPushMatrix();
+		glScalef(scale, scale, scale);
+		glBegin(GL_TRIANGLES);
+		glVertex3f(0.0f, 1.0f, 0.0f);
+		glVertex3f(-1.0f, -1.0f, 0.0f); //left vertex
+		glVertex3f(1.0f, -1.0f, 0.0f); //right vertex 
+		glEnd();
+		glPopMatrix();
+		scale -= 0.1f;
 
-	glColor3f(0.0f, 0.0f, 1.0f);
+		if (i == 0)
+		{
+			glColor3f(1.0f, 0.0f, 0.0f); //R
+		}
 
-	for (float f = 2.18f; f >= -2.18f; f = f - 0.04f)
-	{
-		glVertex3f(f, 1.25f, 0.0f);
-		glVertex3f(f, -1.25f, 0.0f);
+		else if ( i == 1)
+		{
+			glColor3f(0.0f, 1.0f, 0.0f); //G
+		}
 
-		glVertex3f(f, 1.25f, 0.0f);
-		glVertex3f(f, -1.25f, 0.0f);
+		else if ( i == 2)
+		{
+			glColor3f(0.0f, 0.0f, 1.0f); //B
+		}
+
+		else if (i == 3)
+		{
+			glColor3f(0.5f, 1.0f, 1.0f); //C
+		}
+
+		else if (i == 4)
+		{
+			glColor3f(1.0f, 0.0f, 1.0f); //M
+		}
+
+		else if (i == 5)
+		{
+			glColor3f(1.0f, 1.0f, 0.0f); //Y
+		}
+
+		else if (i == 6)
+		{
+			glColor3f(1.0f, 1.0f, 1.0f); //W
+		}
+
+		else if (i == 7)
+		{
+			glColor3f(1.0f, 0.0f, 0.761f); //P
+		}
+
+		else if (i == 8)
+		{
+			glColor3f(1.0f, 0.843f, 1.0f); //LB
+		}
+
+		else if (i == 9)
+		{
+			glColor3f(1.0f ,0.529f, 0.0f); //O
+		}
+
 	}
-		
-		
-	glEnd();
 
 	SwapBuffers(ghdc);
 }

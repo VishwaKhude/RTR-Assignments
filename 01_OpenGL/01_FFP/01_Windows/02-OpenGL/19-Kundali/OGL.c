@@ -4,8 +4,6 @@
 #include <stdio.h>            // For File I/O
 #include <stdlib.h>           // For exit()				
 
-float f;
-
 // OpenGl Header Files
 #include <gl/GL.h> // '\' also works
 
@@ -347,20 +345,24 @@ void display(void)
 
 	glTranslatef(0.0f, 0.0f, -3.0f); // -3.0f means towards the screen on z-axis (-)on z-axis
 
+	glBegin(GL_LINE_LOOP);
+
+	glColor3f(1.0f, 0.5f, 0.0f);
+	glVertex3f(0.0f, 1.2f, 0.0f); 
+	glVertex3f(2.2f, 0.0f, 0.0f); 		
+	glVertex3f(0.0f, -1.2f, 0.0f); 		
+	glVertex3f(-2.2f, 0.0f, 0.0f);
+	glEnd();
+
 	glBegin(GL_LINES);
+	glColor3f(1.0f, 0.5, 0.0f);
+	glVertex3f(-3.0f, 1.65f, 0.0f); 
+	glVertex3f(3.0f, -1.65f, 0.0f); 
+	glEnd();
 
-	glColor3f(0.0f, 0.0f, 1.0f);
-
-	for (float f = 2.18f; f >= -2.18f; f = f - 0.04f)
-	{
-		glVertex3f(f, 1.25f, 0.0f);
-		glVertex3f(f, -1.25f, 0.0f);
-
-		glVertex3f(f, 1.25f, 0.0f);
-		glVertex3f(f, -1.25f, 0.0f);
-	}
-		
-		
+	glBegin(GL_LINES);
+	glVertex3f(3.0f, 1.65f, 0.0f); 
+	glVertex3f(-3.0f, -1.65f, 0.0f); 
 	glEnd();
 
 	SwapBuffers(ghdc);
