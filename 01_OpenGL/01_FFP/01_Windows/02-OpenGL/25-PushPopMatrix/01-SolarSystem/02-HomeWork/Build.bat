@@ -1,9 +1,17 @@
 cls
 
-cl.exe /c /EHsc OGL.c
+del *.obj
 
-rc.exe OGL.rc
+del *.exe
 
-link.exe OGL.obj OGL.res user32.lib gdi32.lib /SUBSYSTEM:WINDOWS
+del *.txt
 
-OGL.exe
+cl.exe /c /EHsc /I..\..\..\..\include\ OGL.c
+
+rc.exe /I..\..\..\..\include OGL.rc
+
+link.exe OGL.obj OGL.res user32.lib gdi32.lib /SUBSYSTEM:WINDOWS /OUT:..\..\..\..\bin\%1.exe
+
+del *.obj
+
+..\..\..\..\bin\%1.exe 

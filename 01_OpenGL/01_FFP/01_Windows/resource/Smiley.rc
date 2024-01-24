@@ -1,0 +1,6 @@
+#include <windows.h>
+
+#include "Smiley.h"
+
+MYICON ICON MyIcon.ico
+MYSMILEYBITMAP BITMAP Smiley.bmp
