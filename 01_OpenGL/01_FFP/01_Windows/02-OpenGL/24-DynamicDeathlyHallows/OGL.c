@@ -7,6 +7,9 @@
 #define _USE_MATH_DEFINES
 #include <math.h>
 
+//For music
+#include <mmsystem.h>
+
 // OpenGl Header Files
 #include <gl/GL.h> // '\' also works
 
@@ -21,6 +24,7 @@
 // link with opengl library
 #pragma comment(lib, "OpenGL32.lib")
 #pragma comment(lib, "glu32.lib")
+#pragma comment(lib, "winmm.lib")
 
 //OpenGl Related Global Variables
 HDC ghdc = NULL;
@@ -37,6 +41,23 @@ BOOL gbActive = FALSE;
 DWORD dwStyle = 0;
 WINDOWPLACEMENT wpPrev = { sizeof(WINDOWPLACEMENT) };
 BOOL gbFullscreen = FALSE;
+
+GLfloat side = 1.0f; 
+
+GLfloat tx = 1.0f;
+GLfloat ty = 1.0f;
+GLfloat cx = 1.0f;
+GLfloat cy = 1.0f;
+GLfloat rot = 0.0f;
+GLfloat t = 0.0f;
+
+float line_x = 0.0f;
+float line_y = 1.0f;
+
+GLfloat lerp(GLfloat start, GLfloat end, GLfloat t)
+{
+	return (start + (end - start) * t);
+}
 
 // Entry Point Function
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmdLine, int iCmdShow) //Winmain(main function which gives window(Hungarian Notation Used)), lpsz(Long Pointer To Zero-Terminated String ('\0')), hPrevInstance - for backward compatibility
@@ -198,6 +219,10 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lParam) // 
 				gbFullscreen = FALSE;
 			}
 			break;
+
+		case 'P':
+		case 'p':
+				PlaySound("GOT_theme.wav", NULL, SND_ASYNC | SND_FILENAME);
 		}
 		break;
 
@@ -329,7 +354,7 @@ void resize(int width, int height)
 	// Code
 	if (height <= 0)
 		height = 1;
-
+	
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
 
@@ -344,28 +369,49 @@ void display(void)
 	glClear(GL_COLOR_BUFFER_BIT);
 
 	glMatrixMode(GL_MODELVIEW);
-	glLoadIdentity();
 
-	glTranslatef(0.0f, 0.0f, -5.0f); // -3.0f means towards the screen on z-axis (-)on z-axis
-
-	glBegin(GL_LINE_LOOP);
-	glVertex3f(0.0f, 1.0f, 0.0f);
-	glVertex3f(-1.0f, -1.0f, 0.0f); 
-	glVertex3f(1.0f, -1.0f, 0.0f); 
+	/*glVertex3f(0.0f, 1.0f, 0.0f);
+	glVertex3f(-1.0f, -1.0f, 0.0f);
+	glVertex3f(1.0f, -1.0f, 0.0f);
 	glEnd();
 
 	glBegin(GL_LINES);
 	glVertex3f(0.0f, 1.0f, 0.0f);
 	glVertex3f(0.0f, -1.0f, 0.0f);
+	glEnd(); */
+
+	glLoadIdentity();
+	glTranslatef(tx, ty, -3.0f); // -3.0f means towards the screen on z-axis (-)on z-axis
+	glRotatef(rot, 0.0f, 1.0f, 0.0f);
+
+	glBegin(GL_LINE_LOOP);
+	glVertex2f(0.0f, side / (sqrt(3.0f)));
+	glVertex2f(-side / 2.0f, -side / (2.0f * sqrt(3.0f)));
+	glVertex2f(side / 2.0f, -side / (2.0f * sqrt(3.0f)));
+
+	glEnd();
+	
+	glLoadIdentity();
+	glTranslatef(line_x, line_y, -3.0f);
+
+	glBegin(GL_LINES);
+
+	glVertex3f(0.0f, 0.57f, 0.0f);
+	glVertex3f(0.0f, -0.28f, 0.0f);
 	glEnd();
 
-	glTranslatef(0.0f, -0.8f, -5.5f); 
+	GLfloat r = (sqrt(3.0f) * side) / 6.0f;
+	glLoadIdentity();
+	glTranslatef(cx, cy, -3.0f); 
+	glRotatef(rot, 0.0f, -1.0f, 0.0f);
 	glBegin(GL_LINE_LOOP);
 	for (int i = 0; i < 100; i++)
-		{
-			float angle = 2.0f * M_PI * i / 100;
-			glVertex2f(1.30 * cos(angle), 1.30 * sin(angle));
-		}
+	{
+		GLfloat theta = 2.0f * M_PI * (GLfloat)i / (GLfloat)100;
+		GLfloat x = r * cosf(theta);
+		GLfloat y = r * sinf(theta);
+		glVertex2f(x, y);
+	}
 	glEnd();
 
 	SwapBuffers(ghdc);
@@ -375,6 +421,23 @@ void update(void)
 {
 	// Code
 
+	if (rot >= 360.0f)
+		rot = rot - 360.0f;
+
+	rot += 0.5f;
+	//rot = lerp(0.0f, 360.0f, t);
+	
+	if (t <= 1.0f)
+	{
+		t += 0.0005f;
+	}
+
+	tx = lerp(-1.0f, 0.0f, t);
+	ty = lerp(-1.0f, 0.0f, t);
+	cx = lerp(1.0f, 0.0f, t);
+	cy = lerp(-1.0f, 0.0f, t);
+	line_x = lerp(0.0f, 0.0f, t);
+	line_y = lerp(1.0f, 0.0f, t);
 }
 
 void uninitialize(void)
