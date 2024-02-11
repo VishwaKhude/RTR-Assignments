@@ -351,42 +351,63 @@ void display(void)
 	glMatrixMode(GL_MODELVIEW);
 
 	glLoadIdentity();
-	glTranslatef(-2.0f, 0.0f, -3.0f); // -3.0f means towards the screen on z-axis (-)on z-axis
+	glTranslatef(-1.95f, -0.16f, -3.0f); // -3.0f means towards the screen on z-axis (-)on z-axis
 
 	void B();
 {
 	glBegin(GL_QUADS);
 
+	glColor3f(1.0f, 0.40f, 0.121f);
 	glVertex2f(0.0, 0.6);
+
+	glColor3f(1.0f, 1.0f, 1.0f);
 	glVertex2f(0.05, 0.6);
+
+	glColor3f(1.0f, 1.0f, 1.0f);
 	glVertex2f(0.05, -0.2);
+
+	glColor3f(0.015f, 0.41f, 0.21f);
 	glVertex2f(0.0, -0.2);
 
-	glVertex2f(0.05, -0.15);
-	glVertex2f(0.05, -0.2);
+	glColor3f(0.015f, 0.41f, 0.21f);
+	glVertex2f(-0.03, -0.15);
+
+	glColor3f(0.015f ,0.41f, 0.21f);
+	glVertex2f(-0.03, -0.2);
+	
+	glColor3f(0.015f, 0.41f, 0.21f);
 	glVertex2f(0.30, -0.2);
 	glVertex2f(0.30, -0.15);
-
+	
+	glColor3f(1.0f, 0.40f, 0.121f);
 	glVertex2f(0.30, -0.2);
 	glVertex2f(0.35, -0.2);
 	glVertex2f(0.35, 0.6);
 	glVertex2f(0.30, 0.6);
 
+	glColor3f(1.0f, 1.0f, 1.0f);
 	glVertex2f(0.30, 0.6);
 	glVertex2f(0.30, 0.55);
-	glVertex2f(0.05, 0.55);
-	glVertex2f(0.05, 0.6);
+	glVertex2f(-0.03, 0.55);
+	glVertex2f(-0.03, 0.6);
 
+	glColor3f(0.015f, 0.41f, 0.21f);
 	glVertex2f(0.05, 0.15);
+	
+	glColor3f(1.0f, 1.0f, 1.0f);
 	glVertex2f(0.05, 0.20);
+
+	glColor3f(1.0f, 1.0f, 1.0f);
 	glVertex2f(0.35, 0.20);
+
+	glColor3f(1.0f, 1.0f, 1.0f);
 	glVertex2f(0.35, 0.15);
 
 	glEnd();
 }
 
 glLoadIdentity();
-glTranslatef(-1.3f, 0.0f, -3.0f);
+glTranslatef(-1.17f, -0.16f, -3.0f);
 
 void H();
 {
@@ -397,10 +418,10 @@ void H();
 	glVertex2f(-0.2, -0.2);
 	glVertex2f(-0.25, -0.2);
 
-	glVertex2f(0.2, 0.27);
-	glVertex2f(0.2, 0.33);
-	glVertex2f(-0.2, 0.33);
-	glVertex2f(-0.2, 0.27);
+	glVertex2f(0.2, 0.20);
+	glVertex2f(0.2, 0.15);
+	glVertex2f(-0.2, 0.15);
+	glVertex2f(-0.2, 0.20);
 
 	glVertex2f(0.25, 0.6);
 	glVertex2f(0.2, 0.6);
@@ -410,7 +431,7 @@ void H();
 }
 
 glLoadIdentity();
-glTranslatef(-0.350f, 0.10f, -1.5f);
+glTranslatef(-0.270f, 0.015f, -1.5f);
 
 void A();
 {
@@ -436,7 +457,7 @@ void A();
 }
 
 glLoadIdentity();
-glTranslatef(-0.05f, -0.15f, -2.4f);
+glTranslatef(0.1f, -0.29f, -2.4f);
 
 void R();
 {
@@ -462,8 +483,8 @@ void R();
 	glVertex2f(0.2,0.275);
 	glVertex2f(0.25,0.275);
 
-	glVertex2f(-0.25, 0.25);
-	glVertex2f(-0.15, 0.25);
+	glVertex2f(-0.25, 0.275);
+	glVertex2f(-0.15, 0.275);
 	glVertex2f(0.25,0);
 	glVertex2f(0.18,0);
 
@@ -471,7 +492,7 @@ void R();
 }
 
 glLoadIdentity();
-glTranslatef(0.28, -0.09f, -1.5f);
+glTranslatef(0.4, 0.02f, -1.5f);
 
 void A();
 {
