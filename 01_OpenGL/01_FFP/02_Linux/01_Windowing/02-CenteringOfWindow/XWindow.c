@@ -36,6 +36,7 @@ int main(void)
   Atom windowManagerDelete;
   XEvent event;
   KeySym keySym;
+
   char keys[26];
   int ScreenWidth, ScreenHeight;
 
@@ -130,6 +131,11 @@ int main(void)
 
   //Step-13 Show/Map the Window
   XMapWindow(display, window);
+
+  //Center The Window
+  ScreenWidth = XWidthOfScreen(XScreenOfDisplay(display, visualInfo.screen));
+  HeightOfScreen = XHeightOfScreen(XScreenOfDisplay(display, visualInfo.screen));
+  XMovewindow(display, window, (ScreenWidth - WIN_WIDTH)/2, (ScreenHeight - WIN_HEIGHT));
 
   //Event-Loop
   while(1)
