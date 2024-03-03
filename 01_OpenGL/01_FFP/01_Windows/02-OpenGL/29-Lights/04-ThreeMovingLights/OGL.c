@@ -474,19 +474,19 @@ void update(void)
 {
 	// Code
 	// Animating Light0
-	lightAngleZero = lightAngleZero + 1.0f;
+	lightAngleZero = lightAngleZero + 0.2f;
 	if (lightAngleZero > 360.0f)
 	{
 		lightAngleZero = lightAngleZero - 360.0f;
 	}
 
-	lightAngleOne = lightAngleOne + 1.0f;
+	lightAngleOne = lightAngleOne + 0.2f;
 	if (lightAngleOne > 360.0f)
 	{
 		lightAngleOne = lightAngleOne - 360.0f;
 	}
 
-	lightAngleTwo = lightAngleTwo + 1.0f;
+	lightAngleTwo = lightAngleTwo + 0.2f;
 	if (lightAngleTwo > 360.0f)
 	{
 		lightAngleTwo = lightAngleTwo - 360.0f;

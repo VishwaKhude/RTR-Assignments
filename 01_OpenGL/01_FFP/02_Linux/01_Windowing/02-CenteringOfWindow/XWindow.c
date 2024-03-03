@@ -18,7 +18,7 @@ Colormap colormap;
 Window window;
 XVisualInfo visualInfo;
 
-BOOL bFullScreen = FALSE;
+Bool bFullScreen = False;
 
 int main(void)
 {
@@ -39,16 +39,7 @@ int main(void)
 
   char keys[26];
   int ScreenWidth, ScreenHeight;
-
-  static XFontStruct *pFontStruct = NULL;
-  static int winWidth, winHeight;
-  static GC gc;
-  XColor greenColor;
-  XGCValues gcValues;
-  int stringLength;
-  int fontHeight;
-  char str[] = "Hello World !!!"; 
-
+ 
   //Code
 
   //step-1 Open connection with X-server And Get The Display Interface
@@ -68,8 +59,8 @@ int main(void)
   defaultDepth = XDefaultDepth(display, defaultScreen);
 
   //step-4 Get visual info from above three
-  memset((void*)&VisualInfo, 0, sizeof(XVisualInfo));
-  status = XMatchVisualInfo(display, defaultScreen, defaultDepth, TrueColor, &VisualInfo);
+  memset((void*)&visualInfo, 0, sizeof(XVisualInfo));
+  status = XMatchVisualInfo(display, defaultScreen, defaultDepth, TrueColor, &visualInfo);
   if (status ==0)
   {
     printf("XMatchVisualInfo failed() \n");
@@ -91,7 +82,7 @@ int main(void)
   colormap = windowAttributes.colormap;
 
   //step-7 Set the style of window
-  stylemask = CWBorderPixel | CWBackPixel | Colormap | CWEventMask;
+  styleMask = CWBorderPixel | CWBackPixel | colormap | CWEventMask;
 
   //step-8 Create the window
   window = XCreateWindow(display,
@@ -134,69 +125,23 @@ int main(void)
 
   //Center The Window
   ScreenWidth = XWidthOfScreen(XScreenOfDisplay(display, visualInfo.screen));
-  HeightOfScreen = XHeightOfScreen(XScreenOfDisplay(display, visualInfo.screen));
-  XMovewindow(display, window, (ScreenWidth - WIN_WIDTH)/2, (ScreenHeight - WIN_HEIGHT));
+  ScreenHeight = XHeightOfScreen(XScreenOfDisplay(display, visualInfo.screen));
+  XMoveWindow(display, window, (ScreenWidth - WIN_WIDTH)/2, (ScreenHeight - WIN_HEIGHT));
 
   //Event-Loop
   while(1)
   {
     XNextEvent(display, &event);
 
-    switch(event, type)
+    switch(event. type)
     {
-      case MapNotify:
-        pFontStruct = XLoadQueryFont(display, "fixed");
-        break;
-
-      case FocusIn:
-        break;
-      
-      case FocusOut:
-        break;
-
-      case ConfigureNotify:
-        winWidth = event.xconfigure.width;
-        winHeight = event.xconfigure.height;
-        break;
-
-      case Expose:
-        gc = XCreateGC(display, window, 0, &cValues);
-        XSetFont(display, colormap, pFontStruct->fid);
-        XAllocNamedColor(display, colormap, "green", &greenColor, &greenColor);
-        XSetForeground(display, gc, greenColor.pixel);
-
-        stringLength = strlen(str);
-        stringWidth = XTextWidth(pFontStruct, str, stringLength);
-        stringLength = pFontStruct->ascent+pFontStruct->descent;
-        XDrawString(display, window, gc, (winWidth - stringWidth) /2, (winHeight - fontHeight) /2, str, stringLength);
-        break;
-
-      case ButtonPress:
-        switch (event.xbutton.button)
-        {
-          case 1:
-            break;
-          
-          case 2:
-            break;
-
-          case 3:
-            break;
-
-          default:
-            break;
-        }
-
-        break;
-      
+            
       case KeyPress:
-        keySym = XkbkeycodeToKeysym(display, event.xkey.keycode, 0, 0);
+        keySym = XkbKeycodeToKeysym(display, event.xkey.keycode, 0, 0);
 
         switch(keySym)
         {
           case XK_Escape:
-                XUnloadFont(display, pFontStruct->fid);
-                XFreeGC(display, gc);
                 uninitialize();
                 exit(0);
           break;
@@ -208,8 +153,6 @@ int main(void)
         break;
 
       case 33:
-          XUnloadFont(display, pFontStruct->fid);
-          XFreeGC(display, gc);
           uninitialize();
           exit(0);
       break;

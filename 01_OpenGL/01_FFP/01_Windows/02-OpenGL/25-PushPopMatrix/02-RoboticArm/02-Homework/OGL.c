@@ -25,6 +25,7 @@ HGLRC ghrc = NULL;
 
 int shoulder = 0;
 int elbow = 0;
+int wrist = 0; 
 
 GLUquadric* quadric = NULL;
 
@@ -207,11 +208,17 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lParam) // 
 			shoulder = (shoulder - 3) % 360;
 			break;
 		case 'E':
-			elbow = elbow = (elbow + 3) % 360;
+			elbow = (elbow + 3) % 360;
 			break;
 		case 'e':
-			elbow = elbow = (elbow - 3) % 360;
+			elbow = (elbow - 3) % 360;
 			break;
+		case 'W':
+			wrist = (wrist + 3) % 360;
+			break;
+		case 'w':
+			wrist = (wrist - 3) % 360;
+			break; 
 		}
 		break;
 
@@ -398,6 +405,19 @@ void display(void)
 	glScalef(2.0f, 0.5f, 1.0f);
 
 	// Draw The Forearm
+	glColor3f(0.8f, 0.6f, 0.4f);
+	gluSphere(quadric, 0.5f, 10, 10);
+
+	// Pop this matrix
+	glPopMatrix();
+
+	// Do transformations for Wrist
+	glRotatef((GLfloat)wrist, 0.0f, 0.0f, 1.0f);
+	glTranslatef(1.99f, 0.0f, 0.0f);
+	glPushMatrix();
+	glScalef(2.0f, 0.5f, 1.0f);
+
+	// Draw The Wrist
 	glColor3f(0.8f, 0.6f, 0.4f);
 	gluSphere(quadric, 0.5f, 10, 10);
 

@@ -18,7 +18,7 @@ Colormap colormap;
 Window window;
 XVisualInfo visualInfo;
 
-BOOL bFullScreen = FALSE;
+Bool bFullScreen = False;
 
 int main(void)
 {
@@ -67,8 +67,8 @@ int main(void)
   defaultDepth = XDefaultDepth(display, defaultScreen);
 
   //step-4 Get visual info from above three
-  memset((void*)&VisualInfo, 0, sizeof(XVisualInfo));
-  status = XMatchVisualInfo(display, defaultScreen, defaultDepth, TrueColor, &VisualInfo);
+  memset((void*)&visualInfo, 0, sizeof(XVisualInfo));
+  status = XMatchVisualInfo(display, defaultScreen, defaultDepth, TrueColor, &visualInfo);
   if (status ==0)
   {
     printf("XMatchVisualInfo failed() \n");
@@ -90,7 +90,7 @@ int main(void)
   colormap = windowAttributes.colormap;
 
   //step-7 Set the style of window
-  stylemask = CWBorderPixel | CWBackPixel | Colormap | CWEventMask;
+  styleMask = CWBorderPixel | CWBackPixel | Colormap | CWEventMask;
 
   //step-8 Create the window
   window = XCreateWindow(display,
@@ -235,4 +235,3 @@ void uninitialize(void)
         display = NULL;
     }
 }
-

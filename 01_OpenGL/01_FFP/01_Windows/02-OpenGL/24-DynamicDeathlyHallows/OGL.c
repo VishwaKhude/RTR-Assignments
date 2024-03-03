@@ -392,17 +392,17 @@ void display(void)
 	glEnd();
 	
 	glLoadIdentity();
-	glTranslatef(line_x, line_y, -3.0f);
+	glTranslatef(line_x, line_y, -5.0f);
 
 	glBegin(GL_LINES);
 
-	glVertex3f(0.0f, 0.57f, 0.0f);
-	glVertex3f(0.0f, -0.28f, 0.0f);
+	glVertex3f(0.0f, 0.43f, 0.0f);
+	glVertex3f(0.0f, -0.26f, 0.0f);
 	glEnd();
 
 	GLfloat r = (sqrt(3.0f) * side) / 6.0f;
 	glLoadIdentity();
-	glTranslatef(cx, cy, -3.0f); 
+	glTranslatef(cx, cy, -1.0f); 
 	glRotatef(rot, 0.0f, -1.0f, 0.0f);
 	glBegin(GL_LINE_LOOP);
 	for (int i = 0; i < 100; i++)
@@ -424,12 +424,12 @@ void update(void)
 	if (rot >= 360.0f)
 		rot = rot - 360.0f;
 
-	rot += 0.5f;
+	rot += 0.1f;
 	//rot = lerp(0.0f, 360.0f, t);
 	
 	if (t <= 1.0f)
 	{
-		t += 0.0005f;
+		t += 0.1f;
 	}
 
 	tx = lerp(-1.0f, 0.0f, t);

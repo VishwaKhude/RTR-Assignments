@@ -43,6 +43,28 @@ void R();
 void A();
 void T();
 
+void planes();
+
+// Function declarations for lerp
+float b_x;
+float h_x, h_y; 
+float a_x, a_y;
+float r_x, r_y;
+float ax_1, ay_1;
+float t_x, t_y;
+
+float b;
+float h;
+float a;
+float r;
+float a1;
+float t;
+
+GLfloat lerp(GLfloat start, GLfloat end, GLfloat t)
+{
+	return (start + (end - start) * t);
+}
+
 // Entry Point Function
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmdLine, int iCmdShow) //Winmain(main function which gives window(Hungarian Notation Used)), lpsz(Long Pointer To Zero-Terminated String ('\0')), hPrevInstance - for backward compatibility
 {
@@ -351,191 +373,18 @@ void display(void)
 	glMatrixMode(GL_MODELVIEW);
 
 	glLoadIdentity();
-	glTranslatef(-1.95f, -0.16f, -3.0f); // -3.0f means towards the screen on z-axis (-)on z-axis
+	glPushMatrix();
+	glTranslatef(b_x, 0.0f, -3.0f);
+	//glTranslatef(0.5f, 0.0f, -3.0f);
+	B();
+	glPopMatrix();
 
-	void B();
-{
-	glBegin(GL_QUADS);
-
-	glColor3f(1.0f, 0.40f, 0.121f);
-	glVertex2f(0.0, 0.6);
-
-	glColor3f(1.0f, 1.0f, 1.0f);
-	glVertex2f(0.05, 0.6);
-
-	glColor3f(1.0f, 1.0f, 1.0f);
-	glVertex2f(0.05, -0.2);
-
-	glColor3f(0.015f, 0.41f, 0.21f);
-	glVertex2f(0.0, -0.2);
-
-	glColor3f(0.015f, 0.41f, 0.21f);
-	glVertex2f(-0.03, -0.15);
-
-	glColor3f(0.015f ,0.41f, 0.21f);
-	glVertex2f(-0.03, -0.2);
+	glPushMatrix();
+	glTranslatef(h_x, h_y, -3.0f);
+	//glTranslatef(0.5f, 0.0f, -3.0f);
+	H();
+	glPopMatrix();
 	
-	glColor3f(0.015f, 0.41f, 0.21f);
-	glVertex2f(0.30, -0.2);
-	glVertex2f(0.30, -0.15);
-	
-	glColor3f(1.0f, 0.40f, 0.121f);
-	glVertex2f(0.30, -0.2);
-	glVertex2f(0.35, -0.2);
-	glVertex2f(0.35, 0.6);
-	glVertex2f(0.30, 0.6);
-
-	glColor3f(1.0f, 1.0f, 1.0f);
-	glVertex2f(0.30, 0.6);
-	glVertex2f(0.30, 0.55);
-	glVertex2f(-0.03, 0.55);
-	glVertex2f(-0.03, 0.6);
-
-	glColor3f(0.015f, 0.41f, 0.21f);
-	glVertex2f(0.05, 0.15);
-	
-	glColor3f(1.0f, 1.0f, 1.0f);
-	glVertex2f(0.05, 0.20);
-
-	glColor3f(1.0f, 1.0f, 1.0f);
-	glVertex2f(0.35, 0.20);
-
-	glColor3f(1.0f, 1.0f, 1.0f);
-	glVertex2f(0.35, 0.15);
-
-	glEnd();
-}
-
-glLoadIdentity();
-glTranslatef(-1.17f, -0.16f, -3.0f);
-
-void H();
-{
-	glBegin(GL_QUADS);
-
-	glVertex2f(-0.25, 0.6);
-	glVertex2f(-0.2, 0.6);
-	glVertex2f(-0.2, -0.2);
-	glVertex2f(-0.25, -0.2);
-
-	glVertex2f(0.2, 0.20);
-	glVertex2f(0.2, 0.15);
-	glVertex2f(-0.2, 0.15);
-	glVertex2f(-0.2, 0.20);
-
-	glVertex2f(0.25, 0.6);
-	glVertex2f(0.2, 0.6);
-	glVertex2f(0.2, -0.2);
-	glVertex2f(0.25, -0.2);
-	glEnd();
-}
-
-glLoadIdentity();
-glTranslatef(-0.270f, 0.015f, -1.5f);
-
-void A();
-{
-	glBegin(GL_QUADS);
-
-    glVertex2f(0.0f, 0.2f);
-    glVertex2f(0.0f, 0.1f);
-    glVertex2f(-0.08f, -0.2f);
-    glVertex2f(-0.12f, -0.2f);
-
-    glVertex2f(0.07f, -0.10f);
-    glVertex2f(-0.07f, -0.10f);
-    glVertex2f(-0.07f, -0.14f);
-    glVertex2f(0.07f, -0.14f);
-
-    glVertex2f(0.0f, 0.2f);
-    glVertex2f(0.0f, 0.1f);
-    glVertex2f(0.08f, -0.2f);
-    glVertex2f(0.12f, -0.2f);
-
-    glEnd();
-
-}
-
-glLoadIdentity();
-glTranslatef(0.1f, -0.29f, -2.4f);
-
-void R();
-{
-	glBegin(GL_QUADS);
-
-	glVertex2f(-0.25, 0.6);
-	glVertex2f(-0.2, 0.6);
-	glVertex2f(-0.2, 0);
-	glVertex2f(-0.25, 0);
-
-	glVertex2f(-0.25, 0.6);
-	glVertex2f(-0.25, 0.55);
-	glVertex2f(0.25, 0.55);
-	glVertex2f(0.25, 0.6);
-
-	glVertex2f(-0.25, 0.325);
-	glVertex2f(-0.25, 0.275);
-	glVertex2f(0.25, 0.275);
-	glVertex2f(0.25, 0.325);
-
-	glVertex2f(0.25,0.6);
-	glVertex2f(0.2,0.6);
-	glVertex2f(0.2,0.275);
-	glVertex2f(0.25,0.275);
-
-	glVertex2f(-0.25, 0.275);
-	glVertex2f(-0.15, 0.275);
-	glVertex2f(0.25,0);
-	glVertex2f(0.18,0);
-
-	glEnd();
-}
-
-glLoadIdentity();
-glTranslatef(0.4, 0.02f, -1.5f);
-
-void A();
-{
-	glBegin(GL_QUADS);
-
-    glVertex2f(0.0f, 0.2f);
-    glVertex2f(0.0f, 0.1f);
-    glVertex2f(-0.08f, -0.2f);
-    glVertex2f(-0.12f, -0.2f);
-
-    glVertex2f(0.07f, -0.10f);
-    glVertex2f(-0.07f, -0.10f);
-    glVertex2f(-0.07f, -0.14f);
-    glVertex2f(0.07f, -0.14f);
-
-    glVertex2f(0.0f, 0.2f);
-    glVertex2f(0.0f, 0.1f);
-    glVertex2f(0.08f, -0.2f);
-    glVertex2f(0.12f, -0.2f);
-
-    glEnd();
-
-}
-
-glLoadIdentity();
-glTranslatef(0.9, -0.3f, -2.0f);
-
-void T();
-{
-	glBegin(GL_QUADS);
-
-	glVertex2f(0.25, 0.6);
-	glVertex2f(0.25, 0.55);
-	glVertex2f(-0.25, 0.55);
-	glVertex2f(-0.25, 0.6);
-
-	glVertex2f(-0.025, 0.55);
-	glVertex2f(0.025, 0.55);
-	glVertex2f(0.025, 0.07);
-	glVertex2f(-0.025, 0.07);
-
-	glEnd();
-} 		
 
 
 	SwapBuffers(ghdc);
@@ -544,6 +393,18 @@ void T();
 void update(void)
 {
 	// Code
+	if (b <= 1.0f)
+	{
+		b += 0.01;
+		b_x = lerp(-2.0, -1.95, b);
+	}
+
+	else if (h <= 1.0f)
+	{
+		h += 0.001;
+		h_x = lerp(-2.0, -1.17, h);
+		h_y = lerp(4.0, 0.0, h);
+	}
 
 }
 
@@ -716,4 +577,43 @@ void T()
 	glVertex2f(-0.025, 0.07);
 
 	glEnd();
-} 
+
+}
+
+void planes()
+{
+	glBegin(GL_TRIANGLES);
+	
+	glColor3f(0.137255f, 0.137255f,0.556863f); 
+	glVertex3f(0.0f, 0.1f, 0.0f); //apex vertex(upper)
+	glVertex3f(0.4f, 0.0f, 0.0f); //left vertex
+	glVertex3f(0.0f, -0.1f, 0.0f); //right vertex 
+	glEnd();
+
+	glBegin(GL_QUADS);
+
+	glColor3f(0.137255f, 0.137255f,0.556863f);
+	glVertex3f(-0.7f, 0.1f, 0.0f);
+	glVertex3f(-0.015f, 0.1f, 0.0f);
+	glVertex3f(-0.015f, -0.1f, 0.0f);
+	glVertex3f(-0.7f, -0.1f, 0.0f);
+	glEnd();
+
+	glBegin(GL_POLYGON);
+
+	glColor3f(0.137255f, 0.137255f,0.556863f);
+	glVertex3f(-0.9f, 0.1f, 0.0f);
+	glVertex3f(-0.7f, 0.071f, 0.0f);
+	glVertex3f(-0.7f, -0.071f, 0.0f);
+	glVertex3f(-0.9f, -0.1f, 0.0f);
+	glEnd();
+
+	/*glBegin(GL_TRIANGLES);
+
+	glColor3f(0.1, 0.1, 0.5f);
+	glVertex3f(-0.4f, 0.1f, 0.0f);
+	glVertex3f(0.0f, 0.0f, 0.0f);
+	glVertex3f(0.0f, -0.1f, 0.0f);
+	glEnd(); */
+
+}
