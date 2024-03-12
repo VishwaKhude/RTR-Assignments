@@ -1,0 +1,9 @@
+#pragma once
+
+#define MYICON 101
+#define MYBABYBITMAP 102
+#define MYKITEBITMAP  103
+#define MYMAMABITMAP 104
+#define MYMOM_BABYBITMAP 105
+
+

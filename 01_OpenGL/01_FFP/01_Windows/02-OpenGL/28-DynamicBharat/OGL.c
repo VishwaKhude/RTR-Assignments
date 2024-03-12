@@ -384,6 +384,20 @@ void display(void)
 	//glTranslatef(0.5f, 0.0f, -3.0f);
 	H();
 	glPopMatrix();
+
+	glPushMatrix();
+	glTranslatef(a_x, a_y, -2.0f);
+	//glTranslatef(0.5f, 0.0f, -3.0f);
+	A();
+	glPopMatrix();
+
+	glPushMatrix();
+	glTranslatef(r_x, r_y, -3.0f);
+	//glTranslatef(0.5f, 0.0f, -3.0f);
+	R();
+	glPopMatrix();
+
+
 	
 
 
@@ -395,15 +409,29 @@ void update(void)
 	// Code
 	if (b <= 1.0f)
 	{
-		b += 0.01;
+		b += 0.001;
 		b_x = lerp(-2.0, -1.95, b);
 	}
 
 	else if (h <= 1.0f)
 	{
-		h += 0.001;
+		h += 0.0001;
 		h_x = lerp(-2.0, -1.17, h);
-		h_y = lerp(4.0, 0.0, h);
+		h_y = lerp(2.0, 0.0, h);
+	}
+
+	else if (a <= 1.0f)
+	{
+		a += 0.0001;
+		a_x = lerp(-2.0, -1.10, a);
+		a_y = lerp(2.0, 0.0, a); 
+	}
+
+	else if (r <= 1.0f);
+	{
+		r += 0.0001;
+		r_x = lerp(-2.0, -1.13f, r);
+		r_y = lerp(2.0, 0.0, r);
 	}
 
 }
@@ -454,62 +482,84 @@ void uninitialize(void)
 	}
 }
 
-void B()
+void B();
 {
 	glBegin(GL_QUADS);
 
+	glColor3f(1.0f, 0.40f, 0.121f);
 	glVertex2f(0.0, 0.6);
+
+	glColor3f(1.0f, 1.0f, 1.0f);
 	glVertex2f(0.05, 0.6);
+
+	glColor3f(1.0f, 1.0f, 1.0f);
 	glVertex2f(0.05, -0.2);
+
+	glColor3f(0.015f, 0.41f, 0.21f);
 	glVertex2f(0.0, -0.2);
 
-	glVertex2f(0.05, -0.15);
-	glVertex2f(0.05, -0.2);
+	glColor3f(0.015f, 0.41f, 0.21f);
+	glVertex2f(-0.03, -0.15);
+
+	glColor3f(0.015f ,0.41f, 0.21f);
+	glVertex2f(-0.03, -0.2);
+	
+	glColor3f(0.015f, 0.41f, 0.21f);
 	glVertex2f(0.30, -0.2);
 	glVertex2f(0.30, -0.15);
-
+	
+	glColor3f(1.0f, 0.40f, 0.121f);
 	glVertex2f(0.30, -0.2);
 	glVertex2f(0.35, -0.2);
 	glVertex2f(0.35, 0.6);
 	glVertex2f(0.30, 0.6);
 
+	glColor3f(1.0f, 1.0f, 1.0f);
 	glVertex2f(0.30, 0.6);
 	glVertex2f(0.30, 0.55);
-	glVertex2f(0.05, 0.55);
-	glVertex2f(0.05, 0.6);
+	glVertex2f(-0.03, 0.55);
+	glVertex2f(-0.03, 0.6);
 
+	glColor3f(0.015f, 0.41f, 0.21f);
 	glVertex2f(0.05, 0.15);
+	
+	glColor3f(1.0f, 1.0f, 1.0f);
 	glVertex2f(0.05, 0.20);
+
+	glColor3f(1.0f, 1.0f, 1.0f);
 	glVertex2f(0.35, 0.20);
+
+	glColor3f(1.0f, 1.0f, 1.0f);
 	glVertex2f(0.35, 0.15);
 
 	glEnd();
 }
 
-void H()
+void H();
 {
 	glBegin(GL_QUADS);
 
 	glVertex2f(-0.25, 0.6);
 	glVertex2f(-0.2, 0.6);
-	glVertex2f(-0.2, 0);
-	glVertex2f(-0.25, 0);
+	glVertex2f(-0.2, -0.2);
+	glVertex2f(-0.25, -0.2);
 
-	glVertex2f(0.2, 0.27);
-	glVertex2f(0.2, 0.33);
-	glVertex2f(-0.2, 0.33);
-	glVertex2f(-0.2, 0.27);
+	glVertex2f(0.2, 0.20);
+	glVertex2f(0.2, 0.15);
+	glVertex2f(-0.2, 0.15);
+	glVertex2f(-0.2, 0.20);
 
 	glVertex2f(0.25, 0.6);
 	glVertex2f(0.2, 0.6);
-	glVertex2f(0.2, 0);
-	glVertex2f(0.25, 0);
+	glVertex2f(0.2, -0.2);
+	glVertex2f(0.25, -0.2);
 	glEnd();
 }
 
-void A()
+
+void A();
 {
-	 glBegin(GL_QUADS);
+	glBegin(GL_QUADS);
 
     glVertex2f(0.0f, 0.2f);
     glVertex2f(0.0f, 0.1f);
@@ -530,7 +580,7 @@ void A()
 
 }
 
-void R()
+void R();
 {
 	glBegin(GL_QUADS);
 
@@ -554,15 +604,40 @@ void R()
 	glVertex2f(0.2,0.275);
 	glVertex2f(0.25,0.275);
 
-	glVertex2f(-0.25, 0.25);
-	glVertex2f(-0.15, 0.25);
+	glVertex2f(-0.25, 0.275);
+	glVertex2f(-0.15, 0.275);
 	glVertex2f(0.25,0);
 	glVertex2f(0.18,0);
 
 	glEnd();
 }
 
-void T()
+
+void A();
+{
+	glBegin(GL_QUADS);
+
+    glVertex2f(0.0f, 0.2f);
+    glVertex2f(0.0f, 0.1f);
+    glVertex2f(-0.08f, -0.2f);
+    glVertex2f(-0.12f, -0.2f);
+
+    glVertex2f(0.07f, -0.10f);
+    glVertex2f(-0.07f, -0.10f);
+    glVertex2f(-0.07f, -0.14f);
+    glVertex2f(0.07f, -0.14f);
+
+    glVertex2f(0.0f, 0.2f);
+    glVertex2f(0.0f, 0.1f);
+    glVertex2f(0.08f, -0.2f);
+    glVertex2f(0.12f, -0.2f);
+
+    glEnd();
+
+}
+
+
+void T();
 {
 	glBegin(GL_QUADS);
 
@@ -577,8 +652,7 @@ void T()
 	glVertex2f(-0.025, 0.07);
 
 	glEnd();
-
-}
+} 		
 
 void planes()
 {
