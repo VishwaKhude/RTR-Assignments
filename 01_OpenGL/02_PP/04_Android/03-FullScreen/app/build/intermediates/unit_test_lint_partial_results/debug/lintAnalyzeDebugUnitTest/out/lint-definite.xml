@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<incidents format="6" by="lint 8.3.2" type="incidents">
+
+    <incident
+        id="GradleDependency"
+        severity="warning"
+        message="A newer version of com.google.android.material:material than 1.10.0 is available: 1.11.0">
+        <fix-replace
+            description="Change to 1.11.0"
+            family="Update versions"
+            oldString="1.10.0"
+            replacement="1.11.0"/>
+        <location
+            file="../gradle/libs.versions.toml"
+            line="7"
+            column="12"
+            startOffset="119"
+            endLine="7"
+            endColumn="20"
+            endOffset="127"/>
+    </incident>
+
+</incidents>
