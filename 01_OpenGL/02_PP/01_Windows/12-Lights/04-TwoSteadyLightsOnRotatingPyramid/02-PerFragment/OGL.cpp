@@ -423,53 +423,52 @@ int initialize(void)
 
 	// Vertex Shader
 	const GLchar* vertexShaderSourceCode =
-		"#version 460 core"
-		"\n"
-		"in vec4 aPosition;"
-		"in vec3 aNormal;"
-		"uniform mat4 uModelMatrix;"
-		"uniform mat4 uViewMatrix;"
-		"uniform mat4 uProjectionMatrix;"
-		"uniform vec3 uLightAmbient[2];"
-		"uniform vec3 uLightDiffuse[2];"
-		"uniform vec3 uLightSpecular[2];"
-		"uniform vec4 uLightPosition[2];"
-		"uniform vec3 uMaterialAmbient;"
-		"uniform vec3 uMaterialDiffuse;"
-		"uniform vec3 uMaterialSpecular;"
-		"uniform float uMaterialShininess;"
-		"uniform int uKeyPress;"
-		"out vec3 oPhong_ADS_Light;"
-		"void main(void)"
-		"{"
-		"if(uKeyPress == 1)"
-		"{"
-		"vec4 iCoordinates = uViewMatrix * uModelMatrix * aPosition;"
-		"vec3 transformedNormals = normalize(mat3(uViewMatrix * uModelMatrix)*aNormal);"
-		"vec3 lightDirection[2] = normalize(vec3(uLightPosition - iCoordinates));"
-		"vec3 reflectionVector[2] = reflect(-lightDirection, transformedNormals);"
-		"vec3 viewerVector = normalize(-iCoordinates.xyz);"
-		"vec3 ambientLight[2] = uLightAmbient * uMaterialAmbient;"
-		"vec3 diffuseLight[2] = uLightDefuse * uMaterialDefuse *max(dot(lightDirection, transformedNormals), 0.0);"
-		"vec3 specularLight[2] = uLightSpecular * uMaterialSpecular * pow(max(dot(reflectionVector, viewerVector), 0.0), uMaterialShininess);"
-		"for(int i = 0; i < 2; i++)";
-		"{"
-		"lightAmbient[i] = ulightAmbient[i] * uMaterialAmbient;"
-		"lightDirection[i] = normalize(vec3(ulightPosition[i], iCoordinates));"
-		"lightDiffuse[i] = ulightDiffuse[i] * materialDiffuse * max(dot(lightDirection[i], transformedNormals), 0.0);"
-		"reflectionVector[i] = reflect(-lightDirection[i], transformedNormals);"
-		"vec3 viewerVector = normalize(-iCoordinates.xyz);"
-		"lightSpecular[i] = ulightSpecular[i] * materialSpecular * pow(max(dot(refectionVector[i], viewerVector), 0.0), uMaterialShininess);"
-		"}"
-		"oPhong_ADS_Light = oPhong_ADS_Light + ambientLight[i] + diffuseLight[i] + specularLight[i];"
-		"}"
-		"else"
-		"{"
-		"oPhong_ADS_Light = vec3(0.0, 0.0, 0.0);"
-		"}"
-		"gl_Position = uProjectionMatrix * uViewMatrix * uModelMatrix * aPosition;"
-		
-		"}";
+		"#version 460 core \n" \
+		"in vec4 aPosition; \n" \
+		"in vec3 aNormal; \n" \
+		"uniform mat4 uModelMatrix; \n" \
+		"uniform mat4 uViewMatrix; \n" \
+		"uniform mat4 uProjectionMatrix; \n" \
+		"uniform vec3 uLightAmbient[2]; \n" \
+		"uniform vec3 uLightDiffuse[2]; \n" \
+		"uniform vec3 uLightSpecular[2]; \n" \
+		"uniform vec4 uLightPosition[2]; \n" \
+		"uniform vec3 uMaterialAmbient; \n" \
+		"uniform vec3 uMaterialDiffuse; \n" \
+		"uniform vec3 uMaterialSpecular; \n" \
+		"uniform float uMaterialShininess; \n" \
+		"uniform int uKeyPress; \n" \
+		"out vec3 oPhong_ADS_Light; \n" \
+		"void main(void) \n" \
+		"{ \n" \
+		"if(uKeyPress == 1) \n" \
+		"{ \n" \
+		"vec4 iCoordinates = uViewMatrix * uModelMatrix * aPosition; \n" \
+		"vec3 transformedNormals = normalize(mat3(uViewMatrix * uModelMatrix)*aNormal); \n" \
+		"vec3 lightDirection[2]; \n" \
+		"vec3 reflectionVector[2]; \n" \
+		"vec3 viewerVector = normalize(-iCoordinates.xyz); \n" \
+		"vec3 ambientLight[2]; \n" \
+		"vec3 diffuseLight[2]; \n" \
+		"vec3 specularLight[2]; \n" \
+		"for(int i = 0; i < 2; i++) \n" \
+		"{ \n" \
+		"ambientLight[i] = uLightAmbient[i] * uMaterialAmbient; \n" \
+		"lightDirection[i] = normalize(vec3(uLightPosition[i] - iCoordinates)); \n" \
+		"diffuseLight[i] = uLightDiffuse[i] * uMaterialDiffuse * max(dot(lightDirection[i], transformedNormals), 0.0); \n" \
+		"reflectionVector[i] = reflect(-lightDirection[i], transformedNormals); \n" \
+		"vec3 viewerVector = normalize(-iCoordinates.xyz); \n" \
+		"specularLight[i] = uLightSpecular[i] * uMaterialSpecular * pow(max(dot(reflectionVector[i], viewerVector), 0.0), uMaterialShininess); \n" \
+		"oPhong_ADS_Light += oPhong_ADS_Light + ambientLight[i] + diffuseLight[i] + specularLight[i]; \n" \
+		"} \n" \
+		"} \n" \
+		"else \n" \
+		"{ \n" \
+		"oPhong_ADS_Light = vec3(0.0, 0.0, 0.0); \n" \
+		"} \n" \
+		"gl_Position = uProjectionMatrix * uViewMatrix * uModelMatrix * aPosition; \n" \
+		"}; \n" \
+		"\n";
 
 	GLuint vertexShaderObject = glCreateShader(GL_VERTEX_SHADER);
 
@@ -508,14 +507,14 @@ int initialize(void)
 	const GLchar *fragmentShaderSourceCode =
 		"#version 460 core"
 		"\n"
-		"in vec3 oDiffuseLight;"
+		"in vec3 oPhong_ADS_Light;"
 		"uniform int uKeyPress;"
 		"out vec4 fragColor;"
 		"void main(void)"
 		"{"
 		"if (uKeyPress == 1)"
 		"{"
-		"fragColor = vec4(oDiffuseLight, 1.0f);"
+		"fragColor = vec4(oPhong_ADS_Light, 1.0f);"
 		"}"
 		"else"
 		"{"
@@ -683,12 +682,12 @@ int initialize(void)
 	// perspective projection
 	perspectiveProjectionMatrix = vmath::mat4::identity();
 
-	light[0].Ambient = vec3(0.0f, 0.0f, 0.0f, 1.0f);
-	light[1].Ambient = vec3(0.0f, 0.0f, 0.0f, 1.0f);
-	light[0].Diffuse = vec3(1.0f, 0.0f, 0.0f, 1.0f);
-	light[1].Diffuse = vec3(0.0f, 0.0f, 1.0f, 1.0f);
-	light[0].Specular = vec3(1.0f, 0.0f, 0.0f, 1.0f);
-	light[1].Specular = vec3(0.0f, 0.0f, 1.0f, 1.0f);
+	light[0].Ambient = vec3(0.0f, 0.0f, 0.0f);
+	light[1].Ambient = vec3(0.0f, 0.0f, 0.0f);
+	light[0].Diffuse = vec3(1.0f, 0.0f, 0.0f);
+	light[1].Diffuse = vec3(0.0f, 0.0f, 1.0f);
+	light[0].Specular = vec3(1.0f, 0.0f, 0.0f);
+	light[1].Specular = vec3(0.0f, 0.0f, 1.0f);
 	light[0].Position = vec4(-2.0f, 0.0f, 0.0f, 1.0f);
 	light[1].Position = vec4(2.0f, 0.0f, 0.0f, 1.0f);
 
@@ -758,6 +757,7 @@ void display(void)
 
 	if (bLightingEnabled == TRUE)
 	{
+		glUniform1i(keyPressUniform, 1);
 		glUniform3fv(lAmbientUniform[0], 1, light[0].Ambient);
 		glUniform3fv(lDiffuseUniform[0], 1, light[0].Diffuse);
 		glUniform3fv(lSpecularUniform[0], 1, light[0].Specular);
@@ -770,7 +770,7 @@ void display(void)
 		glUniform3fv(materialAmbientUniform, 1, materialAmbient);
 		glUniform3fv(materialDiffuseUniform, 1, materialDiffuse);
 		glUniform3fv(materialSpecularUniform, 1, materialSpecular);
-		glUniform1fv(materialShininessUniform, 1, materialShininess);
+		glUniform1f(materialShininessUniform, materialShininess);
 	}
 	else
 	{

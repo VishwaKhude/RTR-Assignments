@@ -612,8 +612,6 @@ int initialize(void)
 		0.0f, 1.0f,
 	};
 
-
-
 	//CUBE
 	//VAO
 	glGenVertexArrays(1, &vao_cube);
@@ -674,14 +672,14 @@ int initialize(void)
 	bResult = loadGLTexture(&texture_stone, MAKEINTRESOURCE(MYSTONEBITMAP));
 	if (bResult == FALSE)
 	{
-		fprintf(gpfile, "loading of stone texture() failed");
+		fprintf(gpfile, "loading of stone texture() failed \n");
 		return(-7);
 	}
 
 	bResult = loadGLTexture(&texture_kundali, MAKEINTRESOURCE(MYKUNDALIBITMAP));
 	if (bResult == FALSE)
 	{
-		fprintf(gpfile, "loading of kundali texture() failed");
+		fprintf(gpfile, "loading of kundali texture() failed \n");
 		return(-8);
 	}
 
@@ -707,7 +705,7 @@ BOOL loadGLTexture(GLuint* texture, TCHAR imageResourceID[])
 	hBitmap = (HBITMAP)LoadImage(GetModuleHandle(NULL), imageResourceID, IMAGE_BITMAP, 0, 0, LR_CREATEDIBSECTION);
 	if (hBitmap == NULL)
 	{
-		fprintf(gpfile, "LoadImageFailed()");
+		fprintf(gpfile, "LoadImageFailed() \n");
 		return(FALSE);
 	}
 	GetObject(hBitmap, sizeof(BITMAP), &bmp);

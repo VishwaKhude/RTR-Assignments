@@ -3,5 +3,5 @@
 #include "OGL.h"
 
 MYICON ICON MyIcon.ico
-MYBITMAP BITMAP Stone.bmp
-MYBITMAP2 BITMAP Vijay_Kundali.bmp
+MYSTONEBITMAP  BITMAP Stone.bmp
+MYKUNDALIBITMAP BITMAP Vijay_Kundali.bmp

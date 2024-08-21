@@ -1,32 +1,49 @@
-// OpenGL starts here...
-// Common Windows Header Files
-#include <windows.h>		  // same as <stdio.h> library function, // includes around 3,50,000 API's, Win32 API
-#include <stdio.h>            // For File I/O
-#include <stdlib.h>           // For exit()				
+// Windows Header Files
+#include <windows.h>     //sdk win32api
+#include <stdio.h>      //file io
+#include <stdlib.h>     //exit()
+#include <iostream>
 
-// OpenGl Header Files
-#include <gl/glew.h> // This must be before gl/GL.h
-#include <gl/GL.h> // '\' also works
+//OpenGL Header File
+#include <GL/glew.h> //this must be before <GL/gl.h>
+#include <GL/gl.h>
 
-// header file for programmable pipeline
 #include "vmath.h"
 using namespace vmath;
 
-#include "OGL.h"		      // Our HeaderFile   
+#include "OGL.h"
 
-//Macros
+//macors
 #define WIN_WIDTH 800
 #define WIN_HEIGHT 600
 
-// link with opengl library
+//link with opengl library
 #pragma comment(lib, "glew32.lib")
-#pragma comment(lib, "opengl32.lib")
+#pragma comment(lib,"opengl32.lib")
 
-//OpenGl Related Global Variables
+// Global Function Declarations
+LRESULT CALLBACK WndProc(HWND, UINT, WPARAM, LPARAM);
+
+// Global Variable Declarations
+
+// for fileIO
+FILE* gpFILE = NULL;
+
+//for fullscreen
+HWND ghwnd = NULL;
+DWORD dwStyle = 0;
+WINDOWPLACEMENT wpPrev = { sizeof(WINDOWPLACEMENT) };
+BOOL gbFullscreen = FALSE;
+
+//for active/inactive
+BOOL gbActiveWindow = FALSE;
+
+//OpenGL related global variables
 HDC ghdc = NULL;
 HGLRC ghrc = NULL;
 
 GLuint shaderProgramObject = 0;
+
 enum
 {
 	AMC_ATTRIBUTE_POSITION = 0,
@@ -34,122 +51,132 @@ enum
 	AMC_ATTRIBUTE_TEXCOORD
 };
 
-// for square
 GLuint vao_square = 0;
 GLuint vbo_position_square = 0;
 GLuint vbo_texcoord_square = 0;
 
-GLuint square_texcoord = 0;
-
 GLuint mvpMatrixUniform = 0;
 GLuint textureSamplerUniform = 0;
-
 GLuint keyPressUniform = 0;
-int keyPress = 0;
 
-mat4 perspectiveProjectionMatrix;		//mat4 is in vmath.h
+//for keys
+int gb1 = 0;
 
-//texture object
+//texture
 GLuint texture_smiley = 0;
 
-// Global Function Declarations (Global because called by OS, _far, _pascal)      
-LRESULT CALLBACK WndProc(HWND, UINT, WPARAM, LPARAM); // (WndProc(Window Procedure) - Hungarian(Charles Simonee) Notation used) (CALLBACK FUNCTIONS), (HWND - Handle Window), (WPARAM - 16 Bit), (LPARAM - 32Bit)
+mat4 perspectiveProjetionMatrix;
 
-// Global Variable Declarations
-FILE* gpfile = NULL;          //Global Pointer
-
-HWND ghwnd = NULL;
-BOOL gbActive = FALSE;
-DWORD dwStyle = 0;
-WINDOWPLACEMENT wpPrev = { sizeof(WINDOWPLACEMENT) };
-BOOL gbFullscreen = FALSE;
-
-// Entry Point Function
-int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmdLine, int iCmdShow) //Winmain(main function which gives window(Hungarian Notation Used)), lpsz(Long Pointer To Zero-Terminated String ('\0')), hPrevInstance - for backward compatibility
+//Entry Point Function
+int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmdLine, int iCmdShow)
 {
-	//Function Declarations 
+	//fucntion declaration
 	int initialize(void);
 	void uninitialize(void);
 	void display(void);
 	void update(void);
 
-	// Local Variable Declarations
-	WNDCLASSEX wndclass;  // (wndclass)window, class(type), type or class of window EX(WND(window) Extended)
-	HWND hwnd;            //handle window (Unsigned Int)
-	MSG msg;             // struct
-	TCHAR szAppName[] = TEXT(" VMKWindow "); // szAppName - Zero Terminated String To App-Name ('\0'), TEXT (macro)
-											 // TEXT(macro) - similar to 'printf'
-	int iResult = 0;
-	BOOL bdone = FALSE;
+	//Local Variable Declarations
+	WNDCLASSEX wndclass;
+	HWND hwnd;
+	MSG msg;
+	TCHAR szAppName[] = TEXT(" ABCWindow ");
 
-	// Local Variable Declarations For Centering Of Window
-	int ScreenWidth = GetSystemMetrics(SM_CXSCREEN);
-	int ScreenHeight = GetSystemMetrics(SM_CYSCREEN);
-	
+	int iResult = 0;
+
+	BOOL bDone = FALSE;   //game loop
+
+	//for centering
+	int ScreenHeight;
+	int ScreenWidth;
+	int WindowHeight = 600;
+	int WindowWidth = 800;
+
+	ScreenWidth = GetSystemMetrics(SM_CXSCREEN);
+	ScreenHeight = GetSystemMetrics(SM_CYSCREEN);
+
+	int X = ScreenWidth / 2 - WindowWidth / 2;
+	int Y = ScreenHeight / 2 - WindowHeight / 2;
+
+
 	//code
-	gpfile = fopen("log.txt", "w");
-	if (gpfile == NULL)
+//	gpFILE = fopen("Log.txt", "w");
+//	fopen_s 
+	if (!AttachConsole(ATTACH_PARENT_PROCESS))
 	{
-		MessageBox(NULL, TEXT("Log File Cannot Be Opened"), TEXT("Error"), MB_OK | MB_ICONERROR);
+		AllocConsole();
+	}
+	freopen("CONOUT$", "w", stdout);
+	std::cout << "Log On Console" << std::endl;
+
+
+	if (fopen_s(&gpFILE, "Log.txt", "w") != 0)
+	{
+		MessageBox(NULL, TEXT("Log File Cannot Be Opend"), TEXT("Error"), MB_OK | MB_ICONERROR);
 		exit(0);
 	}
-	fprintf(gpfile, "Program Started Successfully\n");
-	fprintf(gpfile, "***********************************************\n\n");
 
-	// WNDCEX initialization (Window Class Extended)
-	wndclass.cbSize = sizeof(WNDCLASSEX); // cbSize - Count Of Byte-size                                      
-	wndclass.style = CS_HREDRAW | CS_VREDRAW | CS_OWNDC; // CS_HREDRAW - Class Style (Horizontal Re-Draw), CS_VREDRAW - (Vertical Re-Draw) // window should be drawn(modified) vertically and horizontally, CS | OWNDC = ClassStyle |Class Ownership(paint Specialist)
-	wndclass.cbClsExtra = 0;  //c
+	fprintf(gpFILE, "Program Started Successfully\n");
+	fprintf(gpFILE, "-------------------------------------------\n");
+
+	//WNDCEX initialization
+	wndclass.cbSize = sizeof(WNDCLASSEX);
+	wndclass.style = CS_HREDRAW | CS_VREDRAW | CS_OWNDC;
+	wndclass.cbClsExtra = 0;
 	wndclass.cbWndExtra = 0;
-	wndclass.lpfnWndProc = WndProc; // lpfnWndProc - Long Pointer To Function - Window-Procedure
-	wndclass.hInstance = hInstance;  //Handle To Instance, (Camel Notation Used)
-	wndclass.hbrBackground = (HBRUSH)GetStockObject(BLACK_BRUSH); // hbrBackground - (handleTobrush) Background, BLACK_BRUSH = macro For Getting Brush Having Black Color
-	wndclass.hIcon = LoadIcon(hInstance, MAKEINTRESOURCE(MYICON)); // hIcon - handle To Icon, Icon is an - 'RESOURCE', ('NULL' Parameter because we have no icon and have to get one), ID - Identifier I - (Application) - Icon ,  
-	wndclass.hCursor = LoadCursor(NULL, IDC_ARROW);  // NULL Parameter because we don't have a cursor, hCursor(Handle To Cursor)  
-	wndclass.lpszClassName = szAppName;  // long-pointer to zero(NULL) terminated ('\0') Class Name
-	wndclass.lpszMenuName = NULL;      //Menu name - NULL (We Don't Have A Menu)
-	wndclass.hIconSm = LoadIcon(hInstance, MAKEINTRESOURCE(MYICON)); 
+	wndclass.lpfnWndProc = WndProc;
+	wndclass.hInstance = hInstance;
+	wndclass.hbrBackground = (HBRUSH)GetStockObject(BLACK_BRUSH);
+	wndclass.hIcon = LoadIcon(hInstance, MAKEINTRESOURCE(MYICON));
+	wndclass.hCursor = LoadCursor(NULL, IDC_ARROW);
+	wndclass.lpszClassName = szAppName;
+	wndclass.lpszMenuName = NULL;
+	wndclass.hIconSm = LoadIcon(hInstance, MAKEINTRESOURCE(MYICON));
 
-	// Register WNDCLASSEX
-	RegisterClassEx(&wndclass); //Registered Extended Class
+	//Register WNDCLASSEX
+	RegisterClassEx(&wndclass);
 
-	// Create Window
-	hwnd = CreateWindowEx(WS_EX_APPWINDOW, szAppName, // string to NULL terminated app name('\0'), //Creates window in memory, WS_EX_APPWINDOW -  
-		TEXT("Vishwa Khude"), // TEXT(macro) UNICODE
-		WS_OVERLAPPEDWINDOW | WS_CLIPCHILDREN | WS_CLIPSIBLINGS | WS_VISIBLE,  // (Window Style - OVERLAPPED(appearing above every application), WS_CLIPCHILDREN - area Clipped / Covered By Child Window is Excluded By Parent Window, WS_CLIPSIBLINGS - Exclude Clipping/Covering By SiblingWindow, WS_VISIBLE - PArent Window Should Be Visible 
-		ScreenWidth / 2 - WIN_WIDTH / 2,
-		ScreenHeight / 2 - WIN_HEIGHT / 2,
+	//Create Window
+	hwnd = CreateWindow(szAppName,
+		TEXT("Vishwa Khude"),
+		WS_OVERLAPPEDWINDOW | WS_CLIPCHILDREN | WS_CLIPSIBLINGS | WS_VISIBLE,
+		X,
+		Y,
 		WIN_WIDTH,
 		WIN_HEIGHT,
-		NULL,    // Desktop Window(Defalut Handle), HWND_DESKTOP, (Parent Window Handle)      
-		NULL,    // NULL Parameter for 'Menu'
-		hInstance,    // Instance for Creating Handle For Window(OS)
-		NULL);   // used as an vessel (lpvoid(long parameter to void) - void*)
-	
+		NULL,
+		NULL,
+		hInstance,
+		NULL);
+
 	ghwnd = hwnd;
 
-	// initialization
+	//Initialization
 	iResult = initialize();
 	if (iResult != 0)
 	{
-		MessageBox(hwnd, TEXT("initialize() Failed"), TEXT("Error"), MB_OK | MB_ICONERROR);
+		MessageBox(hwnd, TEXT("initialize() failed"), TEXT("Error"), MB_OK | MB_ICONERROR);
 		DestroyWindow(hwnd);
 	}
-		
-	// Show The Window
-	ShowWindow(hwnd, iCmdShow);  // ShowWindow - Displaying Our Window, By Using (handle to window (hwnd)), 
 
-	SetForegroundWindow(hwnd); // Set Window On The Fore-ground(Front Order(Z-order))
-	SetFocus(hwnd); // Keep My Window Highlited/Focused
+
+
+	// Show The Window
+	ShowWindow(hwnd, iCmdShow);
+	SetForegroundWindow(hwnd);
+	SetFocus(hwnd);
+
+	// Paint/Re-Draw The Window
 	UpdateWindow(hwnd);
 
-	// Game-loop
-	while (bdone == FALSE)
+	// Message-loop
+	//game-loop
+	while (bDone == FALSE)
 	{
 		if (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE))
 		{
 			if (msg.message == WM_QUIT)
-				bdone = TRUE;
+				bDone = TRUE;
 			else
 			{
 				TranslateMessage(&msg);
@@ -158,47 +185,48 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmdLi
 		}
 		else
 		{
-			if (gbActive == TRUE)
+			if (gbActiveWindow == TRUE)
 			{
-				// Render
+				//RENDER
 				display();
 
-				// Update
+				//UPDATE
 				update();
 			}
+
 		}
 	}
-
-	// Uninitialization
 	uninitialize();
 
 	return((int)msg.wParam);
 }
 
-// CallBack Function
-LRESULT CALLBACK WndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lParam) // UINT- Unsigned INTeger iMsg(integer Message) 
+
+//CallBack Function
+LRESULT CALLBACK WndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lParam)
 {
-	//Function Declarations
+	// Function Declarations
 	void ToggleFullScreen(void);
 	void resize(int, int);
 
 	// code
-	switch (iMsg)  // Destroying The Window
+	switch (iMsg)
 	{
 	case WM_SETFOCUS:
-		gbActive = TRUE;
+		gbActiveWindow = TRUE;
 		break;
 
 	case WM_KILLFOCUS:
-		gbActive = FALSE;
+		gbActiveWindow = FALSE;
 		break;
 
-	case WM_SIZE:     // *** lParam(WM_SIZE) gives - Width & Height ***
+	case WM_SIZE:
 		resize(LOWORD(lParam), HIWORD(lParam));
 		break;
 
-	case WM_ERASEBKGND: // WM_ERASEBKGND - wParam EraseBackGround(Erase The BackGround Of My Window)
-		return(0);  
+	case WM_ERASEBKGND:
+		return(0);
+		break;
 
 	case WM_KEYDOWN:
 		switch (LOWORD(wParam))
@@ -207,13 +235,39 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lParam) // 
 
 			DestroyWindow(hwnd);
 			break;
+
+		case 0x31:
+		case 0x61:
+			glEnable(GL_TEXTURE_2D);
+			gb1 = 1;
+			break;
+		case 0x32:
+		case 0x62:
+			glEnable(GL_TEXTURE_2D);
+			gb1 = 2;
+			break;
+		case 0x33:
+		case 0x63:
+			glEnable(GL_TEXTURE_2D);
+			gb1 = 3;
+			break;
+		case 0x34:
+		case 0x64:
+			glEnable(GL_TEXTURE_2D);
+			gb1 = 4;
+			break;
+
+		default:
+			glDisable(GL_TEXTURE_2D);
+			gb1 = 0;
+			break;
 		}
 		break;
 
 	case WM_CHAR:
 		switch (LOWORD(wParam))
 		{
-		case 'F':    // FallThrough
+		case 'F':
 		case 'f':
 			if (gbFullscreen == FALSE)
 			{
@@ -226,66 +280,28 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lParam) // 
 				gbFullscreen = FALSE;
 			}
 			break;
-		case WM_KEYDOWN:
-			switch (LOWORD(wParam))
-			{
-			case VK_ESCAPE:
-
-			case 'N1':
-			case 'VK_NUMPAD1':
-			{
-				keyPress = 1;
-				glEnable(GL_TEXTURE_2D);
-				break;
-			}
-
-			case 'N2':
-			case 'VK_NUMPAD2':
-			{
-				keyPress = 2;
-				glEnable(GL_TEXTURE_2D);
-				break;
-			}
-
-			case 'N3':
-			case 'VK_NUMPAD3':
-			{
-				keyPress = 3;
-				glEnable(GL_TEXTURE_2D);
-				break;
-			}
-
-			case 'N4':
-			case 'VK_NUMPAD4':
-			{
-				keyPress = 4;
-				glEnable(GL_TEXTURE_2D);
-				break;
-			}
-						
 		}
 		break;
 
 	case WM_CLOSE:
-	{
 		DestroyWindow(hwnd);
 		break;
-	}
 
-	case WM_DESTROY :  // GetMessage- False
-		if (gpfile)
+	case WM_DESTROY:
+		if (gpFILE)
 		{
-			fprintf(gpfile, "Program Ended Successfully\n");
-			fclose(gpfile);
-			gpfile = NULL;
+			fprintf(gpFILE, "Program Ended Successfully...\n");
+			fclose(gpFILE);
+			gpFILE = NULL;
 		}
+
 		PostQuitMessage(0);
 		break;
-	default :
+	default:
 		break;
 	}
 
-	return(DefWindowProc(hwnd, iMsg, wParam, lParam)); // Default Window Procedure For returning the messages which are not be used in the program
+	return(DefWindowProc(hwnd, iMsg, wParam, lParam));
 }
 
 void ToggleFullScreen(void)
@@ -296,13 +312,13 @@ void ToggleFullScreen(void)
 	// Code
 	if (gbFullscreen == FALSE)
 	{
-		dwStyle = GetWindowLong(ghwnd, GWL_STYLE); // Win32 API(dwStyle)
+		dwStyle = GetWindowLong(ghwnd, GWL_STYLE);
 
 		if (dwStyle & WS_OVERLAPPEDWINDOW)
 		{
 			if (GetWindowPlacement(ghwnd, &wpPrev) && GetMonitorInfo(MonitorFromWindow(ghwnd, MONITORINFOF_PRIMARY), &mi))
 			{
-				SetWindowLong(ghwnd, GWL_STYLE, dwStyle & ~WS_OVERLAPPEDWINDOW);  // ~(To Remove Contents)
+				SetWindowLong(ghwnd, GWL_STYLE, dwStyle & ~WS_OVERLAPPEDWINDOW);  // ~Remove Contents
 				SetWindowPos(ghwnd, HWND_TOP, mi.rcMonitor.left, mi.rcMonitor.top, mi.rcMonitor.right - mi.rcMonitor.left, mi.rcMonitor.bottom - mi.rcMonitor.top, SWP_NOZORDER | SWP_FRAMECHANGED);
 			}
 		}
@@ -322,83 +338,84 @@ void ToggleFullScreen(void)
 
 int initialize(void)
 {
-	
+	//function declarations
+	void printgGLInfo(void);
 	void resize(int, int);
-
+	void uninitialize(void);
 	BOOL loadGLTexture(GLuint*, TCHAR[]);
 
+	//code
+	//variable declaration
+	PIXELFORMATDESCRIPTOR PFD;
+	int iPixelFormatIndex = 0;
 	BOOL bResult;
 
-	// function declarations
-	void uninitialize(void);
-	void printGLInfo(void);
+	//initializing PFD struct with 0
+	ZeroMemory(&PFD, sizeof(PIXELFORMATDESCRIPTOR));
 
-	// Code
-	PIXELFORMATDESCRIPTOR pfd;
-	int iPixelFormatIndex = 0;
-	ZeroMemory(&pfd, sizeof(PIXELFORMATDESCRIPTOR));
+	//initialization of PixelFormatDescriptor
+	PFD.nSize = sizeof(PIXELFORMATDESCRIPTOR);
+	PFD.nVersion = 1;
+	PFD.dwFlags = PFD_DRAW_TO_WINDOW | PFD_SUPPORT_OPENGL | PFD_DOUBLEBUFFER;
+	PFD.iPixelType = PFD_TYPE_RGBA;
+	PFD.cColorBits = 32;
+	PFD.cRedBits = 8;
+	PFD.cGreenBits = 8;
+	PFD.cBlueBits = 8;
+	PFD.cAlphaBits = 8;
+	PFD.cDepthBits = 32;
 
-	// 1) Initialization of pixel format descriptor
-	pfd.nSize, sizeof(PIXELFORMATDESCRIPTOR);
-	pfd.nVersion = 1;
-	pfd.dwFlags = PFD_DRAW_TO_WINDOW | PFD_SUPPORT_OPENGL | PFD_DOUBLEBUFFER;
-	pfd.iPixelType = PFD_TYPE_RGBA;  // RGBA - red, green, blue, alpha
-	pfd.cColorBits = 32;
-	pfd.cRedBits = 8;
-	pfd.cGreenBits = 8;
-	pfd.cBlueBits = 8;
-	pfd.cAlphaBits = 8;
-	pfd.cDepthBits = 32;
 
-	// 2) Get The DC 
+	//get dc
 	ghdc = GetDC(ghwnd);
 	if (ghdc == NULL)
 	{
-		fprintf(gpfile, "GetDC() failed\n");
+		fprintf(gpFILE, "GetDC Failed\n");
 		return(-1);
 	}
 
-	// 3) Choose Pixel Format
-	iPixelFormatIndex = ChoosePixelFormat(ghdc, &pfd);
+	//choosing pixel format which closlely matches to our initialised PFD
+	iPixelFormatIndex = ChoosePixelFormat(ghdc, &PFD);
+
 	if (iPixelFormatIndex == 0)
 	{
-		fprintf(gpfile, "ChoosePixelFormat() failed");
+		fprintf(gpFILE, "Choose PixelFormat function() failed");
 		return(-2);
 	}
 
-	// 4) Use Pixel Format Index(Set Obtained Pixel Format)
-	if (SetPixelFormat(ghdc, iPixelFormatIndex, &pfd) == FALSE)
+	//set obtain PixelFormat
+	if (SetPixelFormat(ghdc, iPixelFormatIndex, &PFD) == FALSE)
 	{
-		fprintf(gpfile, "SetPixelFormat() failed");
+		fprintf(gpFILE, "SetPixelFormat\n");
 		return(-3);
 	}
 
-	// 5) Tell WindowsGraphicsLibrary(WGL) - [bridging API] to give me OpenGl Compatible dc(device context) from this dc(device context)
+	//create opengl context from device context
 	ghrc = wglCreateContext(ghdc);
 	if (ghrc == NULL)
 	{
-		fprintf(gpfile, "wglCreateContext() failed");
+		fprintf(gpFILE, "wglCreateContext() failed");
 		return(-4);
 	}
 
-	// make rendering context current
+	//make rendering context current
 	if (wglMakeCurrent(ghdc, ghrc) == FALSE)
 	{
-		fprintf(gpfile, "wglMakeCurrent() failed");
+		fprintf(gpFILE, "wglMakeCurrent() Fialed\n");
 		return(-5);
 	}
 
-	// initialize GLEW
+	//initialise GLEW
 	if (glewInit() != GLEW_OK)
 	{
-		fprintf(gpfile, "glewInit failed to initialize GLEW");
+		fprintf(gpFILE, "glewInit() failed\n");
 		return(-6);
 	}
 
-	// print GLINFO
-	printGLInfo();
+	//printglinfo
+	printgGLInfo();
 
-	// Vertex Shader 
+	//Vertex Shader
 	const GLchar* vertexShaderSourceCode =
 		"#version 460 core" \
 		"\n" \
@@ -408,64 +425,59 @@ int initialize(void)
 		"out vec2 oTexCoord;" \
 		"void main(void)" \
 		"{" \
-		"gl_Position = aPosition;" \
-		"oTexCoord = aTexCoord;" \
-		"gl_Position = uMVPMatrix*aPosition;" \
+		"gl_Position=aPosition;" \
+		"oTexCoord=aTexCoord;" \
+		"gl_Position= uMVPMatrix*aPosition;" \
 		"}";
 
 	GLuint vertexShaderObject = glCreateShader(GL_VERTEX_SHADER);
-	
-	glShaderSource(vertexShaderObject, 1, (const GLchar**)& vertexShaderSourceCode, NULL);
-	
+
+	glShaderSource(vertexShaderObject, 1, (const GLchar**)&vertexShaderSourceCode, NULL);
+
 	glCompileShader(vertexShaderObject);
 
-	// 
 	GLint status = 0;
 	GLint infoLogLength = 0;
-	GLchar* szInfoLog = NULL;
+	GLchar* szinfolog = NULL;
 
 	glGetShaderiv(vertexShaderObject, GL_COMPILE_STATUS, &status);
 	if (status == GL_FALSE)
 	{
 		glGetShaderiv(vertexShaderObject, GL_INFO_LOG_LENGTH, &infoLogLength);
-
-		szInfoLog = (GLchar*)malloc(infoLogLength);
 		if (infoLogLength > 0)
 		{
-			szInfoLog = (GLchar*)malloc(infoLogLength);
-
-			if (szInfoLog != NULL)
+			szinfolog = (GLchar*)malloc(infoLogLength);
+			if (szinfolog != NULL)
 			{
-				glGetShaderInfoLog(vertexShaderObject, GL_INFO_LOG_LENGTH, NULL, szInfoLog);
-				fprintf(gpfile, "vertex shader compilation error log - %s\n", szInfoLog);
-
-				free(szInfoLog);
-				szInfoLog = NULL;
-				
+				glGetShaderInfoLog(vertexShaderObject, GL_INFO_LOG_LENGTH, NULL, szinfolog);
+				fprintf(gpFILE, "VertexShader Compilation error log : %s\n", szinfolog);
+				free(szinfolog);
+				szinfolog = NULL;
 			}
 		}
 		uninitialize();
 	}
 
-	//Fragment Shader 
+	//fragment shader
 	const GLchar* fragmentShaderSourceCode =
-		"#version 460 core" \
-		"\n" \
-		"in vec2 oTexCoord;" \
-		"uniform sampler2D uTextureSampler;" \
-		"uniform int ukeyPress;"
-		"out vec4 FragColor;" \
-		"void main(void)" \
-		"{" \
-		"if (ukeyPress == 0)"
-		"{"
-		"FragColor = vec4(1.0, 1.0, 1.0, 1.0);"
-		"}"
-		"else"
-		"{"
-		"FragColor = texture(uTextureSampler, oTexCoord);" \
+		"#version 460 core"\
+		"\n"
+		"in vec2 oTexCoord;"\
+		"uniform sampler2D uTextureSampler;"\
+		"uniform int uKeyPress;"\
+		"out vec4 FragColor;"\
+		"void main(void)"\
+		"{"\
+		"if(uKeyPress == 0)"
+		"{"\
+		"FragColor = vec4(1.0f,1.0f,1.0f,1.0f);"\
+		"}"\
+		"else"\
+		"{"\
+		"FragColor=texture(uTextureSampler, oTexCoord);"\
+		"}"\
 		"}";
-	
+
 	GLuint fragmentShaderObject = glCreateShader(GL_FRAGMENT_SHADER);
 
 	glShaderSource(fragmentShaderObject, 1, (const GLchar**)&fragmentShaderSourceCode, NULL);
@@ -474,31 +486,27 @@ int initialize(void)
 
 	status = 0;
 	infoLogLength = 0;
-	szInfoLog = NULL;
+	szinfolog = NULL;
 
 	glGetShaderiv(fragmentShaderObject, GL_COMPILE_STATUS, &status);
 	if (status == GL_FALSE)
 	{
 		glGetShaderiv(fragmentShaderObject, GL_INFO_LOG_LENGTH, &infoLogLength);
-		
 		if (infoLogLength > 0)
 		{
-			szInfoLog = (GLchar*)malloc(infoLogLength);
-
-			if (szInfoLog != NULL)
+			szinfolog = (GLchar*)malloc(infoLogLength);
+			if (szinfolog != NULL)
 			{
-				glGetShaderInfoLog(fragmentShaderObject, GL_INFO_LOG_LENGTH, NULL, szInfoLog);
-				fprintf(gpfile, "fragment shader compilation error log : %s \n", szInfoLog);
-				free(szInfoLog);
-				szInfoLog = NULL;
-				
+				glGetShaderInfoLog(fragmentShaderObject, GL_INFO_LOG_LENGTH, NULL, szinfolog);
+				fprintf(gpFILE, "FragmentShader Compilation error log : %s\n", szinfolog);
+				free(szinfolog);
+				szinfolog = NULL;
 			}
 		}
-
 		uninitialize();
 	}
 
-	// shader Program
+	//shader program
 	shaderProgramObject = glCreateProgram();
 
 	glAttachShader(shaderProgramObject, vertexShaderObject);
@@ -506,12 +514,12 @@ int initialize(void)
 
 	glBindAttribLocation(shaderProgramObject, AMC_ATTRIBUTE_POSITION, "aPosition");
 	glBindAttribLocation(shaderProgramObject, AMC_ATTRIBUTE_TEXCOORD, "aTexCoord");
-	
+
 	glLinkProgram(shaderProgramObject);
 
 	status = 0;
 	infoLogLength = 0;
-	szInfoLog = NULL;
+	szinfolog = NULL;
 
 	glGetProgramiv(shaderProgramObject, GL_LINK_STATUS, &status);
 	if (status == GL_FALSE)
@@ -519,34 +527,34 @@ int initialize(void)
 		glGetProgramiv(shaderProgramObject, GL_INFO_LOG_LENGTH, &infoLogLength);
 		if (infoLogLength > 0)
 		{
-			szInfoLog = (GLchar*)malloc(infoLogLength);
-			if (szInfoLog != NULL)
+			szinfolog = (GLchar*)malloc(infoLogLength);
+			if (szinfolog != NULL)
 			{
-				glGetProgramInfoLog(shaderProgramObject, infoLogLength, NULL, szInfoLog);
-				fprintf(gpfile, "shader program linking error log - %s \n", szInfoLog);
-				free(szInfoLog);
-				szInfoLog = NULL;
+				glGetProgramInfoLog(shaderProgramObject, infoLogLength, NULL, szinfolog);
+				fprintf(gpFILE, "Shader Program linking error log: %s\n", szinfolog);
+				free(szinfolog);
+				szinfolog = NULL;
 			}
 		}
 		uninitialize();
 	}
 
-	// Get shader Uniform locations
+	//get shader uniform locations
 	mvpMatrixUniform = glGetUniformLocation(shaderProgramObject, "uMVPMatrix");
+
 	textureSamplerUniform = glGetUniformLocation(shaderProgramObject, "uTextureSampler");
-	keyPressUniform = glGetUniformLocation(shaderProgramObject, "ukeyPress");
+
+	keyPressUniform = glGetUniformLocation(shaderProgramObject, "uKeyPress");
 
 	const GLfloat square_position[] =
 	{
-		1.0f, 1.0f, 0.0f,
-		-1.0f, 1.0f, 0.0f,
-		-1.0f, -1.0f, 0.0f,
-		1.0f, -1.0f, 0.0f
+	   1.0f, 1.0f, 0.0f,
+	   -1.0f, 1.0f, 0.0f,
+	   -1.0f, -1.0f, 0.0f,
+	   1.0f, -1.0f, 0.0f
 	};
 
-	
-
-	//SQUARE
+	//square
 	//VAO
 	glGenVertexArrays(1, &vao_square);
 	glBindVertexArray(vao_square);
@@ -559,228 +567,231 @@ int initialize(void)
 	glEnableVertexAttribArray(AMC_ATTRIBUTE_POSITION);
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 
-	//VBO for TexCoord
+	//VBO for texcoord
 	glGenBuffers(1, &vbo_texcoord_square);
 	glBindBuffer(GL_ARRAY_BUFFER, vbo_texcoord_square);
-	glBufferData(GL_ARRAY_BUFFER,4 * 2 * sizeof(float), NULL, GL_DYNAMIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, 4 * 2 * sizeof(GLfloat), NULL, GL_DYNAMIC_DRAW);
 	glVertexAttribPointer(AMC_ATTRIBUTE_TEXCOORD, 2, GL_FLOAT, GL_FALSE, 0, NULL);
 	glEnableVertexAttribArray(AMC_ATTRIBUTE_TEXCOORD);
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 
-	//VAO Unbinding
 	glBindVertexArray(0);
 
-	//for Color
-	glVertexAttrib3f(AMC_ATTRIBUTE_COLOR, 1.0f, 1.0f, 1.0f);
-	
-	glBindVertexArray(0);
+	// Enabling Depth
+	glClearDepth(1.0f);								   // Compulsory
+	glEnable(GL_DEPTH_TEST);						   // Compulsory
+	glDepthFunc(GL_LEQUAL);							   // Compulsory
 
-	//Enabling Depth...
-	glClearDepth(1.0f);
-	glEnable(GL_DEPTH_TEST);
-	glDepthFunc(GL_LEQUAL);
-	
-	// Set The Clearcolor of window to blue
-	glClearColor(0.0f, 0.0f, 0.0f, 1.0f); // alpha(transperancy, opaqueness)
+	//set the clear color of window to blue
+	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 
-	// Create Texture
-	bResult = loadGLTexture(&texture_smiley, MAKEINTRESOURCE(MYBITMAP));
+	//create texture
+	bResult = loadGLTexture(&texture_smiley, MAKEINTRESOURCE(MY_SMILEY));
 	if (bResult == FALSE)
 	{
-		fprintf(gpfile, "loading of smiley texture() failed");
-		return(-7);
+		fprintf(gpFILE, "loading of smiley texture failed\n");
+		return(-6);
 	}
 
-	//Tell OpenGl To Enable the Texture
+	//tell opengl to enable texture
 	glEnable(GL_TEXTURE_2D);
 
-	//perspective projection 
-	perspectiveProjectionMatrix = vmath::mat4::identity();
+	//initialise
+	perspectiveProjetionMatrix = vmath::mat4::identity();
 
 	resize(WIN_WIDTH, WIN_HEIGHT);
-		
+	//here opengl starts
 	return(0);
-	
 }
 
 BOOL loadGLTexture(GLuint* texture, TCHAR imageResourceID[])
 {
-	// Local Variable Declarations
+	//LOCAL VARIABLE declaration
 	HBITMAP hBitmap = NULL;
 	BITMAP bmp;
 
-	// Load The Image
 	hBitmap = (HBITMAP)LoadImage(GetModuleHandle(NULL), imageResourceID, IMAGE_BITMAP, 0, 0, LR_CREATEDIBSECTION);
 	if (hBitmap == NULL)
 	{
-		fprintf(gpfile, "LoadImageFailed()");
+		fprintf(gpFILE, "Load image failed\n");
 		return(FALSE);
 	}
+
+	//get image data
 	GetObject(hBitmap, sizeof(BITMAP), &bmp);
 
+	//create opengl texture
 	glGenTextures(1, texture);
 
-	//Bind Texture
+	//bind to 
 	glBindTexture(GL_TEXTURE_2D, *texture);
 
-	glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+	//unpack & allinment
+	glPixelStorei(GL_UNPACK_ALIGNMENT, 1); // for better performance
 
-	// Set Texture Parameters
+	//set texture parameters
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
 
-	// Create Multiple Mipmap Images
-	//gluBuild2DMipmaps is a combination of 2 functions
+	//create multiple mipmap images
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, bmp.bmWidth, bmp.bmHeight, 0, GL_BGR, GL_UNSIGNED_BYTE, (void*)bmp.bmBits);
-
 	glGenerateMipmap(GL_TEXTURE_2D);
 
+	//unbind
 	glBindTexture(GL_TEXTURE_2D, 0);
 
 	DeleteObject(hBitmap);
+
 	hBitmap = NULL;
 
-	return(TRUE); 
-} 
+	return TRUE;
+}
 
-void printGLInfo(void)
+void printgGLInfo(void)
 {
-	// variable declarations
+	//variable declaratios
 	GLint numExtensions;
 	GLint i;
 
-	// code
-	fprintf(gpfile, "OpenGL Vendor : %s \n", glGetString(GL_VENDOR));
-	fprintf(gpfile, "OpenGL Renderer : %s \n", glGetString(GL_RENDERER));
-	fprintf(gpfile, "OpenGL Version : %s \n", glGetString(GL_VERSION));
-	fprintf(gpfile, "OpenGL GLSL Version : %s \n", glGetString(GL_SHADING_LANGUAGE_VERSION));
-
-	fprintf(gpfile, "***********************************************\n\n");
-
-	// Listing of supported extensions
+	//code
+	fprintf(gpFILE, "OpenGL Vendor : %s\n", glGetString(GL_VENDOR));
+	fprintf(gpFILE, "OpenGL Renderer : %s\n", glGetString(GL_RENDERER));
+	fprintf(gpFILE, "OpenGL Version : %s\n", glGetString(GL_VERSION));
+	fprintf(gpFILE, "OpenGL GLSL Version : %s\n", glGetString(GL_SHADING_LANGUAGE_VERSION));
+	fprintf(gpFILE, "-------------------------------------------\n");
+	//listing of supported extensions
 	glGetIntegerv(GL_NUM_EXTENSIONS, &numExtensions);
 
 	for (i = 0; i < numExtensions; i++)
 	{
-		fprintf(gpfile, "%s \n", glGetStringi(GL_EXTENSIONS, i));
+		fprintf(gpFILE, "%s\n", glGetStringi(GL_EXTENSIONS, i));
 	}
-
-	fprintf(gpfile, "***********************************************\n\n");
+	fprintf(gpFILE, "-------------------------------------------\n");
 
 }
 
 void resize(int width, int height)
 {
-	// Code
+	//code
 	if (height <= 0)
 		height = 1;
-		
 
-	glViewport(0, 0, (GLsizei)width, (GLsizei)height); // 0x to 0y, total Width and Height of my window, binoculars
+	//resize
+	glViewport(0, 0, (GLsizei)width, (GLsizei)height);
 
-	// Set perspective projection matrix
-	perspectiveProjectionMatrix = vmath::perspective(45.0f, (GLfloat)width / (GLfloat)height, 0.1f, 100.0f);
-
+	//set perspective projection matrix
+	perspectiveProjetionMatrix = vmath::perspective(45.0f, (GLfloat)width / (GLfloat)height, 0.1f, 100.0f);;
 }
 
 void display(void)
 {
-	// Code
-	// variable declarations
-	GLfloat[8];
+	//VARIABLE DECLARATION
+	GLfloat square_texcoord[8];
 
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // Depth-Buffer Added For 3D(Depth)
-		
+	//code
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
 	glUseProgram(shaderProgramObject);
 
-	// Square
-	//transformation matrix
+	//transformation
+	//square
 	vmath::mat4 modelViewMatrix = vmath::mat4::identity();
-	modelViewMatrix = modelViewMatrix * vmath::translate(0.0f, 0.0f, -6.0f);
+	modelViewMatrix = vmath::translate(0.0f, 0.0f, -6.0f);
 
-	vmath::mat4 modelViewProjectionMatrix = vmath::mat4::identity(); //order of multiplication is v.imp in matrix multiplication
-	modelViewProjectionMatrix = perspectiveProjectionMatrix * modelViewMatrix;
+	vmath::mat4 modelViewProjectionMatrix = vmath::mat4::identity();
+	modelViewProjectionMatrix = perspectiveProjetionMatrix * modelViewMatrix; 	//order is very important
 
-	//For Texture
+	//push above mvp into vertex shaders mvpuniform
+	glUniformMatrix4fv(mvpMatrixUniform, 1, GL_FALSE, modelViewProjectionMatrix);
+
+	//for texture
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, texture_smiley);
 	glUniform1i(textureSamplerUniform, 0);
 
-	// push above mvp into veretex shader's mvp uniform
-	glUniformMatrix4fv(mvpMatrixUniform, 1, GL_FALSE, modelViewProjectionMatrix);
-
 	glBindVertexArray(vao_square);
 
-	// texture coordinates
-	if (keyPress == 1)
+	//texture coordinates
+	if (gb1 == 1)
 	{
 		square_texcoord[0] = 1.0f;
 		square_texcoord[1] = 1.0f;
+
 		square_texcoord[2] = 0.0f;
 		square_texcoord[3] = 1.0f;
+
 		square_texcoord[4] = 0.0f;
 		square_texcoord[5] = 0.0f;
+
 		square_texcoord[6] = 1.0f;
 		square_texcoord[7] = 0.0f;
 
 		glUniform1i(keyPressUniform, 1);
 	}
-
-	else if (keyPress == 2)
+	else if (gb1 == 2)
 	{
 		square_texcoord[0] = 0.5f;
 		square_texcoord[1] = 0.5f;
+
 		square_texcoord[2] = 0.0f;
 		square_texcoord[3] = 0.5f;
+
 		square_texcoord[4] = 0.0f;
 		square_texcoord[5] = 0.0f;
+
 		square_texcoord[6] = 0.5f;
 		square_texcoord[7] = 0.0f;
 
 		glUniform1i(keyPressUniform, 1);
 	}
-
-	else if (keyPress == 3)
+	else if (gb1 == 3)
 	{
 		square_texcoord[0] = 2.0f;
 		square_texcoord[1] = 2.0f;
+
 		square_texcoord[2] = 0.0f;
 		square_texcoord[3] = 2.0f;
+
 		square_texcoord[4] = 0.0f;
 		square_texcoord[5] = 0.0f;
+
 		square_texcoord[6] = 2.0f;
 		square_texcoord[7] = 0.0f;
 
 		glUniform1i(keyPressUniform, 1);
 	}
-
-	else if (keyPress == 4)
+	else if (gb1 == 4)
 	{
 		square_texcoord[0] = 0.5f;
 		square_texcoord[1] = 0.5f;
+
 		square_texcoord[2] = 0.5f;
 		square_texcoord[3] = 0.5f;
+
 		square_texcoord[4] = 0.5f;
 		square_texcoord[5] = 0.5f;
+
 		square_texcoord[6] = 0.5f;
 		square_texcoord[7] = 0.5f;
 
 		glUniform1i(keyPressUniform, 1);
 	}
-	
 	else
 	{
 		glUniform1i(keyPressUniform, 0);
 	}
 
-	//Dynamic draw
 	glBindBuffer(GL_ARRAY_BUFFER, vbo_texcoord_square);
+
 	glBufferData(GL_ARRAY_BUFFER, sizeof(square_texcoord), square_texcoord, GL_DYNAMIC_DRAW);
-	glBindVertexArray(0);
+
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
 
 	glDrawArrays(GL_TRIANGLE_FAN, 0, 4);
 
 	glBindVertexArray(0);
+
+	glBindTexture(GL_TEXTURE_2D, 0);
 
 	glUseProgram(0);
 
@@ -789,22 +800,22 @@ void display(void)
 
 void update(void)
 {
-	// Code
-
+	//code
 }
 
 void uninitialize(void)
 {
-	// Function Declarations
+	//fucntion declarations
 	void ToggleFullScreen(void);
 
-	// Code
+	//code
 	if (shaderProgramObject)
 	{
 		glUseProgram(shaderProgramObject);
 
 		GLint numShaders = 0;
 		glGetProgramiv(shaderProgramObject, GL_ATTACHED_SHADERS, &numShaders);
+
 		if (numShaders > 0)
 		{
 			GLuint* pShaders = (GLuint*)malloc(numShaders * sizeof(GLuint));
@@ -820,62 +831,68 @@ void uninitialize(void)
 				free(pShaders);
 				pShaders = NULL;
 			}
-		
-			glUseProgram(0);
-			glDeleteProgram(shaderProgramObject);
 		}
-
-		// Square
-		
-		//delete vbo of Texture
-		if (vbo_texcoord_square)
-		{
-			glDeleteBuffers(1, &vbo_texcoord_square);
-			vbo_texcoord_square = 0;
-		}
-
-		//delete vbo of position
-		if (vbo_position_square)
-		{
-			glDeleteBuffers(1, &vbo_position_square);
-			vbo_position_square = 0;
-		}
-
-		//delete vao
-		if (vao_square)
-		{
-			glDeleteVertexArrays(1, &vao_square);
-			vao_square = 0;
-		}
-				
+		glUseProgram(0);
+		glDeleteProgram(shaderProgramObject);
+		shaderProgramObject = 0;
 	}
-	// if application is exitting in FullScreen
-	if (gbFullscreen == TRUE)
-		ToggleFullScreen();
 
-	// make the hdc as Currentdc
+	//square
+	//delete vbo of texcoord
+	if (vbo_texcoord_square)
+	{
+		glDeleteBuffers(1, &vbo_texcoord_square);
+		vbo_texcoord_square = 0;
+	}
+
+	//delete vbo of positoion
+	if (vbo_position_square)
+	{
+		glDeleteBuffers(1, &vbo_position_square);
+		vbo_position_square = 0;
+	}
+
+	//delete vao
+	if (vao_square)
+	{
+		glDeleteVertexArrays(1, &vao_square);
+		vao_square = 0;
+	}
+
+	//if application is exiting in fullscreen
+	if (gbFullscreen == TRUE)
+	{
+		ToggleFullScreen();
+		gbFullscreen = FALSE;
+	}
+
+	//make the hdc as current context
 	if (wglGetCurrentContext() == ghrc)
 	{
 		wglMakeCurrent(NULL, NULL);
 	}
 
-	// Destroy Rendering Context
+	//Delete rendering context
 	if (ghrc)
 	{
 		wglDeleteContext(ghrc);
 		ghrc = NULL;
 	}
 
-	// release the hdc
+	//release the hdc
 	if (ghdc)
 	{
 		ReleaseDC(ghwnd, ghdc);
 		ghdc = NULL;
 	}
-	
-	// Destroy window
+
+
+	//DestroyWindow
 	if (ghwnd)
 	{
+		fclose(stdout);
+		FreeConsole();
+
 		DestroyWindow(ghwnd);
 		ghwnd = NULL;
 	}
@@ -886,13 +903,11 @@ void uninitialize(void)
 		texture_smiley = 0;
 	}
 
-	// Close The LogFile
-	if (gpfile)
+	//close the log file
+	if (gpFILE)
 	{
-		fprintf(gpfile, "Program Ended Successfully");
-		fclose(gpfile);
-		gpfile = NULL;
+		fprintf(gpFILE, "Program Ended Successfully...\n");
+		fclose(gpFILE);
+		gpFILE = NULL;
 	}
-	
 }
-

@@ -620,7 +620,7 @@ void uninitialize(void)
 			glDeleteProgram(shaderProgramObject);
 		}
 				
-		//delete vbo of positoion
+		//delete vbo of position
 		if (vbo_position)
 		{
 			glDeleteBuffers(1, &vbo_position);
