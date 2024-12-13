@@ -53,7 +53,7 @@ public class MainActivity extends AppCompatActivity
 			super.onPause();
 		}
 
-		@Override
+	@Override
 		protected void onResume()
 		{
 			super.onResume();

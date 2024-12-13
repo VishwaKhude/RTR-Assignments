@@ -51,7 +51,7 @@ GLuint numSphereElements = 0;
 GLuint gNumVertices = 0;
 
 std::stack<vmath::mat4> ModelStack;
-static int year = 0, day = 0, moon = 0;
+static int shoulder = 0, elbow = 0, wrist = 0;
 
 // Uniform
 GLuint mvpMatrixUniform = 0;
@@ -67,9 +67,9 @@ BOOL bLightingEnabled = FALSE;
 BOOL bAnimationEnabled = FALSE;
 
 // For lighting
-GLfloat lightDiffuse[] = {1.0f, 1.0f, 1.0f, 1.0f};	  // White diffuse light
+/*GLfloat lightDiffuse[] = {1.0f, 1.0f, 1.0f, 1.0f};	  // White diffuse light
 GLfloat materialDiffuse[] = {0.5f, 0.5f, 0.5f, 1.0f}; // grey ambient light
-GLfloat lightPosition[] = {0.0f, 0.0f, 2.0f, 1.0f};
+GLfloat lightPosition[] = {0.0f, 0.0f, 2.0f, 1.0f}; */
 
 mat4 perspectiveProjectionMatrix; // mat4 is in vmath.h
 
@@ -260,25 +260,25 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lParam) // 
 				}
 				break;
 
-			case 'Y':
-				year = (year + 3) % 360;
+			case 'S':
+				shoulder = (shoulder + 3) % 360;
 				break;
-			case 'y':
-				year = (year - 3) % 360;
-				break;
-
-			case 'D':
-				day = (day + 6) % 360;
-				break;
-			case 'd':
-				day = (day - 6) % 360;
+			case 's':
+				shoulder = (shoulder - 3) % 360;
 				break;
 
-			case 'M':
-				moon = (moon + 6) % 360;
+			case 'E':
+				elbow = (elbow + 6) % 360;
 				break;
-			case 'm':
-				moon = (moon - 6) % 360;
+			case 'e':
+				elbow = (elbow - 6) % 360;
+				break;
+
+			case 'W':
+				wrist = (wrist + 6) % 360;
+				break;
+			case 'w':
+				wrist = (wrist - 6) % 360;
 				break;
 
 			default:
@@ -686,7 +686,9 @@ void display(void)
 
 	ModelStack.push(mat4::identity()); //glLoadIdentity();
 
-	ModelStack.push(ModelStack.top() * vmath::translate(0.0f, 0.0f, -5.0f)); //glPushMatrix(); glTranslate(0.0f, 0.0f, -5.0f);
+	ModelStack.push(ModelStack.top() * vmath::translate(0.0f, 0.0f, -12.0f)); //glPushMatrix(); glTranslate(0.0f, 0.0f, -5.0f);
+
+
 
 	// Push All Uniform values into vertex shader
 	glUniformMatrix4fv(modelViewMatrixUniform, 1, GL_FALSE, ModelStack.top());
@@ -704,33 +706,48 @@ void display(void)
 		glUniform1i(keyPressUniform, 0);
 	}
 
-	glBindVertexArray(vao);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, vbo_elements);
-	glDrawElements(GL_TRIANGLES, numSphereElements, GL_UNSIGNED_SHORT, 0);
-
-	/* 
+	//Push this matrix
 	glPushMatrix();
-	glRotatef(year,0.0f,1.0f,0.0f);
-	glTranslatef(1.5f,0.0f,0.0f);
-	glRotatef(day,0.0f,1.0f,0.0f);
-	*/
+
+	// Do transformations for arm 
+	glRotatef((GLfloat)shoulder, 0.0f, 0.0f, 1.0f);
+	glTranslatef(1.0f, 0.0f, 0.0f);
+	glPushMatrix();
+	glScalef(2.0f, 0.5f, 1.0f);
+
+	// Draw Arm
 	
-	// earth
-	ModelStack.push(ModelStack.top() * vmath::rotate((GLfloat)year, 0.0f, 1.0f, 0.0f) * vmath::translate(1.5f, 0.0f, 0.0f) * vmath::rotate((GLfloat)day, 0.0f, 1.0f, 0.0f) * vmath::scale(0.75f, 0.75f, 0.75f)); 
-	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-	glUniformMatrix4fv(modelViewMatrixUniform, 1, GL_FALSE, ModelStack.top());
-	glDrawElements(GL_TRIANGLES, numSphereElements, GL_UNSIGNED_SHORT, 0);
+	gluSphere(quadric, 0.5f, 10, 10);
 
-	ModelStack.pop();
+	// Pop the matrix to comeback to the point where the arm ended by translation
+	glPopMatrix();
 
-	ModelStack.push(ModelStack.top() * vmath::rotate((GLfloat)year, 0.0f,1.0f,0.0f) * vmath::translate(1.5f, 0.0f, 0.0f));
-	ModelStack.push(ModelStack.top() * vmath::rotate((GLfloat)moon, 0.0f,1.0f,0.0f) * vmath::translate(0.8f, 0.0f, 0.0f) * vmath::scale(0.25f,0.25f,0.25f));
+	// Do transformations for forearm in C.T.M.(mtrt) or f
+	glRotatef((GLfloat)elbow, 0.0f, 0.0f, 1.0f);
+	glTranslatef(1.0f, 0.0f, 0.0f);
+	glPushMatrix();
+	glScalef(2.0f, 0.5f, 1.0f);
 
-	glUniformMatrix4fv(modelViewMatrixUniform, 1, GL_FALSE, ModelStack.top());
-	glDrawElements(GL_TRIANGLES, numSphereElements, GL_UNSIGNED_SHORT, 0);
+	// Draw The Forearm
+	glColor3f(0.8f, 0.6f, 0.4f);
+	gluSphere(quadric, 0.5f, 10, 10);
 
-	ModelStack.pop();
-	ModelStack.pop();
+	// Pop this matrix
+	glPopMatrix();
+
+	// Do transformations for Wrist
+	glRotatef((GLfloat)wrist, 0.0f, 0.0f, 1.0f);
+	glTranslatef(1.99f, 0.0f, 0.0f);
+	glPushMatrix();
+	glScalef(2.0f, 0.5f, 1.0f);
+
+	// Draw The Wrist
+	glColor3f(0.8f, 0.6f, 0.4f);
+	gluSphere(quadric, 0.5f, 10, 10);
+
+	// Pop this matrix
+	glPopMatrix();
+
 
 	glBindVertexArray(0);
 	glUseProgram(0);

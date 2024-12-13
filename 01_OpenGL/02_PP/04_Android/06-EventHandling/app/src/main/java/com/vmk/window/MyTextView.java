@@ -6,7 +6,7 @@ import android.content.Context;
 import android.view.MotionEvent;
 import android.view.GestureDetector;
 import android.view.GestureDetector.OnDoubleTapListener;
-import android.view.OnGestureListener;
+import android.view.GestureDetector.OnGestureListener;
 
 // Packages for TextView
 import androidx.appcompat.widget.AppCompatTextView;
@@ -35,14 +35,14 @@ public class MyTextView extends AppCompatTextView implements OnDoubleTapListener
 
 	// Implementation of OnTouch Event of viewClass
 	@Override 
-	public boolean OnTouchEvent(MotionEvent e)
-	{
-		if(!gestureDetector.OnTouchEvent(e))
+		public boolean onTouchEvent(MotionEvent e)
 		{
-			super.OnTouchEvent(e);
+			if(!gestureDetector.onTouchEvent(e))
+			{
+				super.onTouchEvent(e);
+			}
+			return(true);
 		}
-		return(true);
-	}
 
 	// Implementation of 3 methods of OnDoubleTapListener interface
 	@Override
