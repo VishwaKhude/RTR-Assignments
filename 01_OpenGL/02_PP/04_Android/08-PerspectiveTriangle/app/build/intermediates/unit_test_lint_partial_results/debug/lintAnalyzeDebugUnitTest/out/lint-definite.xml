@@ -80,12 +80,12 @@
     <incident
         id="AndroidGradlePluginVersion"
         severity="warning"
-        message="A newer version of com.android.application than 8.3.2 is available: 8.6.0">
+        message="A newer version of com.android.application than 8.3.2 is available: 8.7.3">
         <fix-replace
-            description="Change to 8.6.0"
+            description="Change to 8.7.3"
             family="Update versions"
             oldString="8.3.2"
-            replacement="8.6.0"/>
+            replacement="8.7.3"/>
         <location
             file="../gradle/libs.versions.toml"
             line="2"

@@ -26,7 +26,7 @@
             endOffset="1702"/>
         <entry
             name="model"
-            string="drawable[ic_launcher_background(D),ic_launcher_foreground(D),ic_launcher_foreground_1(E)],mipmap[vimeo(U),ic_launcher(D),ic_launcher_round(D)],string[app_name(U)],style[Theme_AppCompat(R)];1^2,4^0^1,5^0^1;;;"/>
+            string="drawable[ic_launcher_background(D),ic_launcher_foreground(D),ic_launcher_foreground_1(E)],mipmap[myicon(U),ic_launcher(D),ic_launcher_round(D)],string[app_name(U)],style[Theme_AppCompat(R)];1^2,4^0^1,5^0^1;;;"/>
         <location id="R.drawable.ic_launcher_background"
             file="${:app*debug*MAIN*sourceProvider*0*resDir*0}/drawable/ic_launcher_background.xml"
             line="2"

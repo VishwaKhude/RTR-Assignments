@@ -177,15 +177,17 @@ document.getElementById(id).style.display = 'none';
 <div class="mdl-layout mdl-js-layout mdl-layout--fixed-header">
   <header class="mdl-layout__header">
     <div class="mdl-layout__header-row">
-      <span class="mdl-layout-title">Lint Report: 27 warnings</span>
+      <span class="mdl-layout-title">Lint Report: 1 error and 30 warnings</span>
       <div class="mdl-layout-spacer"></div>
-      <nav class="mdl-navigation mdl-layout--large-screen-only">Check performed at Sat Aug 31 17:37:22 IST 2024 by AGP (8.3.2)</nav>
+      <nav class="mdl-navigation mdl-layout--large-screen-only">Check performed at Sat Dec 14 22:14:28 IST 2024 by AGP (8.3.2)</nav>
     </div>
   </header>
   <div class="mdl-layout__drawer">
     <span class="mdl-layout-title">Issue Types</span>
     <nav class="mdl-navigation">
       <a class="mdl-navigation__link" href="#overview"><i class="material-icons">dashboard</i>Overview</a>
+      <a class="mdl-navigation__link" href="#MissingClass"><i class="material-icons error-icon">error</i>Missing registered class (1)</a>
+      <a class="mdl-navigation__link" href="#SuspiciousIndentation"><i class="material-icons warning-icon">warning</i>Suspicious indentation (3)</a>
       <a class="mdl-navigation__link" href="#AndroidGradlePluginVersion"><i class="material-icons warning-icon">warning</i>Obsolete Android Gradle Plugin Version (3)</a>
       <a class="mdl-navigation__link" href="#GradleDependency"><i class="material-icons warning-icon">warning</i>Obsolete Gradle Dependency (12)</a>
       <a class="mdl-navigation__link" href="#UnusedResources"><i class="material-icons warning-icon">warning</i>Unused resources (4)</a>
@@ -207,6 +209,12 @@ document.getElementById(id).style.display = 'none';
 <table class="overview">
 <tr><td class="countColumn"></td><td class="categoryColumn"><a href="#Correctness">Correctness</a>
 </td></tr>
+<tr>
+<td class="countColumn">1</td><td class="issueColumn"><i class="material-icons error-icon">error</i>
+<a href="#MissingClass">MissingClass</a>: Missing registered class</td></tr>
+<tr>
+<td class="countColumn">3</td><td class="issueColumn"><i class="material-icons warning-icon">warning</i>
+<a href="#SuspiciousIndentation">SuspiciousIndentation</a>: Suspicious indentation</td></tr>
 <tr>
 <td class="countColumn">3</td><td class="issueColumn"><i class="material-icons warning-icon">warning</i>
 <a href="#AndroidGradlePluginVersion">AndroidGradlePluginVersion</a>: Obsolete Android Gradle Plugin Version</td></tr>
@@ -246,7 +254,164 @@ Dismiss</button>            </div>
             </div>
           </section>
 <a name="Correctness"></a>
-<a name="AndroidGradlePluginVersion"></a>
+<a name="MissingClass"></a>
+<section class="section--center mdl-grid mdl-grid--no-spacing mdl-shadow--2dp" id="MissingClassCard" style="display: block;">
+            <div class="mdl-card mdl-cell mdl-cell--12-col">
+  <div class="mdl-card__title">
+    <h2 class="mdl-card__title-text">Missing registered class</h2>
+  </div>
+              <div class="mdl-card__supporting-text">
+<div class="issue">
+<div class="warningslist">
+<span class="location"><a href="../../src/main/AndroidManifest.xml">../../src/main/AndroidManifest.xml</a>:12</span>: <span class="message">Class referenced in the manifest, <code>com.vmk.gles_blue.MainActivity</code>, was not found in the project or the libraries</span><br /><pre class="errorlines">
+<span class="lineno">  9 </span>        <span class="prefix">android:</span><span class="attribute">theme</span>=<span class="value">"@style/Theme.AppCompat"</span>
+<span class="lineno"> 10 </span>        <span class="prefix">tools:</span><span class="attribute">targetApi</span>=<span class="value">"31"</span>>
+<span class="lineno"> 11 </span>        <span class="tag">&lt;activity</span><span class="attribute">
+</span><span class="caretline"><span class="lineno"> 12 </span><span class="attribute">            </span><span class="prefix">android:</span><span class="attribute">name</span>=<span class="value">"</span><span class="error"><span class="value">.MainActivity</span></span><span class="value">"</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+<span class="lineno"> 13 </span>            <span class="prefix">android:</span><span class="attribute">exported</span>=<span class="value">"true"</span>>
+<span class="lineno"> 14 </span>            <span class="tag">&lt;intent-filter></span>
+<span class="lineno"> 15 </span>                <span class="tag">&lt;action</span><span class="attribute"> </span><span class="prefix">android:</span><span class="attribute">name</span>=<span class="value">"android.intent.action.MAIN"</span> />
+</pre>
+
+</div>
+<div class="metadata"><div class="explanation" id="explanationMissingClass" style="display: none;">
+If a class is referenced in the manifest or in a layout file, it must also exist in the project (or in one of the libraries included by the project. This check helps uncover typos in registration names, or attempts to rename or move classes without updating the XML references properly.<br/><div class="moreinfo">More info: <a href="https://developer.android.com/guide/topics/manifest/manifest-intro.html">https://developer.android.com/guide/topics/manifest/manifest-intro.html</a>
+</div>To suppress this error, use the issue id "MissingClass" as explained in the <a href="#SuppressInfo">Suppressing Warnings and Errors</a> section.<br/>
+<br/></div>
+</div>
+</div>
+<div class="chips">
+<span class="mdl-chip">
+    <span class="mdl-chip__text">MissingClass</span>
+</span>
+<span class="mdl-chip">
+    <span class="mdl-chip__text">Correctness</span>
+</span>
+<span class="mdl-chip">
+    <span class="mdl-chip__text">Error</span>
+</span>
+<span class="mdl-chip">
+    <span class="mdl-chip__text">Priority 8/10</span>
+</span>
+</div>
+              </div>
+              <div class="mdl-card__actions mdl-card--border">
+<button class="mdl-button mdl-js-button mdl-js-ripple-effect" id="explanationMissingClassLink" onclick="reveal('explanationMissingClass');">
+Explain</button><button class="mdl-button mdl-js-button mdl-js-ripple-effect" id="MissingClassCardLink" onclick="hideid('MissingClassCard');">
+Dismiss</button>            </div>
+            </div>
+          </section><a name="SuspiciousIndentation"></a>
+<section class="section--center mdl-grid mdl-grid--no-spacing mdl-shadow--2dp" id="SuspiciousIndentationCard" style="display: block;">
+            <div class="mdl-card mdl-cell mdl-cell--12-col">
+  <div class="mdl-card__title">
+    <h2 class="mdl-card__title-text">Suspicious indentation</h2>
+  </div>
+              <div class="mdl-card__supporting-text">
+<div class="issue">
+<div class="warningslist">
+<span class="location"><a href="../../src/main/java/com/vmk/PerspectiveTriangle/BW/GLESView.java">../../src/main/java/com/vmk/PerspectiveTriangle/BW/GLESView.java</a>:165</span>: <span class="message">The indentation string here is different from on the previous line (<code>" "</code> vs <code>\t</code>)</span><br /><pre class="errorlines">
+<span class="lineno"> 162 </span>        <span class="keyword">int</span> vertexShaderObject = GLES32.glCreateShader(GLES32.GL_VERTEX_SHADER);
+<span class="lineno"> 163 </span>        GLES32.glShaderSource(vertexShaderObject, vertexShaderSourceCode);
+<span class="lineno"> 164 </span>
+<span class="caretline"><span class="lineno"> 165 </span><span class="warning">        </span>GLES32.glCompileShader(vertexShaderObject);&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+<span class="lineno"> 166 </span>                                    
+<span class="lineno"> 167 </span>        <span class="keyword">int</span>[] shaderCompileStatus = <span class="keyword">new</span> <span class="keyword">int</span>[<span class="number">1</span>];
+<span class="lineno"> 168 </span>        <span class="keyword">int</span>[] infoLogLength = <span class="keyword">new</span> <span class="keyword">int</span>[<span class="number">1</span>];
+</pre>
+
+<ul><span class="location"><a href="../../src/main/java/com/vmk/PerspectiveTriangle/BW/GLESView.java">../../src/main/java/com/vmk/PerspectiveTriangle/BW/GLESView.java</a>:163</span>: <span class="message">Previous line indentation here</span><br /><pre class="errorlines">
+<span class="lineno"> 160 </span>                                            );
+<span class="lineno"> 161 </span>
+<span class="lineno"> 162 </span>        <span class="keyword">int</span> vertexShaderObject = GLES32.glCreateShader(GLES32.GL_VERTEX_SHADER);
+<span class="caretline"><span class="lineno"> 163 </span><span class="warning">     </span>   GLES32.glShaderSource(vertexShaderObject, vertexShaderSourceCode);&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+<span class="lineno"> 164 </span>
+<span class="lineno"> 165 </span>        GLES32.glCompileShader(vertexShaderObject);
+<span class="lineno"> 166 </span>                                    
+</pre>
+</ul><span class="location"><a href="../../src/main/java/com/vmk/PerspectiveTriangle/BW/GLESView.java">../../src/main/java/com/vmk/PerspectiveTriangle/BW/GLESView.java</a>:337</span>: <span class="message">The indentation string here is different from on the previous line (<code>" "</code> vs <code>\t</code>)</span><br /><pre class="errorlines">
+<span class="lineno"> 334 </span>        GLES32.glBindVertexArray(vao[<span class="number">0</span>]);
+<span class="lineno"> 335 </span>        GLES32.glDrawArrays(GLES32.GL_TRIANGLES, <span class="number">0</span>, <span class="number">3</span>);
+<span class="lineno"> 336 </span>
+<span class="caretline"><span class="lineno"> 337 </span>    <span class="warning">    </span>GLES32.glBindVertexArray(<span class="number">0</span>);&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+<span class="lineno"> 338 </span>
+<span class="lineno"> 339 </span>        GLES32.glUseProgram(<span class="number">0</span>);
+</pre>
+
+<ul><span class="location"><a href="../../src/main/java/com/vmk/PerspectiveTriangle/BW/GLESView.java">../../src/main/java/com/vmk/PerspectiveTriangle/BW/GLESView.java</a>:335</span>: <span class="message">Previous line indentation here</span><br /><pre class="errorlines">
+<span class="lineno"> 332 </span>      GLES32.glUniformMatrix4fv(mvpMatrixUniform, <span class="number">1</span>, <span class="keyword">false</span>, modelViewProjectionMatrix, <span class="number">0</span>);
+<span class="lineno"> 333 </span>
+<span class="lineno"> 334 </span>      GLES32.glBindVertexArray(vao[<span class="number">0</span>]);
+<span class="caretline"><span class="lineno"> 335 </span>  <span class="warning"> </span>   GLES32.glDrawArrays(GLES32.GL_TRIANGLES, <span class="number">0</span>, <span class="number">3</span>);&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+<span class="lineno"> 336 </span>
+<span class="lineno"> 337 </span>      GLES32.glBindVertexArray(<span class="number">0</span>);
+</pre>
+</ul><span class="location"><a href="../../src/main/java/com/vmk/PerspectiveTriangle/BW/GLESView.java">../../src/main/java/com/vmk/PerspectiveTriangle/BW/GLESView.java</a>:370</span>: <span class="message">The indentation string here is different from on the previous line (<code>" "</code> vs <code>\t</code>)</span><br /><pre class="errorlines">
+<span class="lineno"> 367 </span>            }  
+<span class="lineno"> 368 </span>            GLES32.glUseProgram(<span class="number">0</span>);
+<span class="lineno"> 369 </span>            GLES32.glDeleteProgram(shaderProgramObject);
+<span class="caretline"><span class="lineno"> 370 </span><span class="warning">            </span>shaderProgramObject = <span class="number">0</span>;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+<span class="lineno"> 371 </span>        }
+<span class="lineno"> 372 </span>
+<span class="lineno"> 373 </span>        <span class="keyword">if</span>(vbo[<span class="number">0</span>] > <span class="number">0</span>)
+</pre>
+
+<ul><span class="location"><a href="../../src/main/java/com/vmk/PerspectiveTriangle/BW/GLESView.java">../../src/main/java/com/vmk/PerspectiveTriangle/BW/GLESView.java</a>:369</span>: <span class="message">Previous line indentation here</span><br /><pre class="errorlines">
+<span class="lineno"> 366 </span>                }
+<span class="lineno"> 367 </span>            }  
+<span class="lineno"> 368 </span>            GLES32.glUseProgram(<span class="number">0</span>);
+<span class="caretline"><span class="lineno"> 369 </span><span class="warning">      </span>      GLES32.glDeleteProgram(shaderProgramObject);&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+<span class="lineno"> 370 </span>            shaderProgramObject = <span class="number">0</span>;
+<span class="lineno"> 371 </span>        }
+</pre>
+</ul></div>
+<div class="metadata"><div class="explanation" id="explanationSuspiciousIndentation" style="display: none;">
+This check looks for cases where the indentation suggests a grouping that isn't actually there in the code. A common example of this would be something like
+<pre>
+if (column > width)
+    line++
+    column = 0
+</pre>
+Here, the <code>column = 0</code> line will be executed every single time, not just if the condition is true.<br/><br/>
+This check can be configured via the following options:<br/><br/>
+<div class="options">
+<b>always-run</b> (default is false):<br/>
+Whether this check should be included while editing.<br/>
+<br/>
+While you're editing, it's common to have a temporary situation where you have suspicious indentation scenarios -- e.g. you start typing an <code>if</code> statement on the line above something you want to make conditional, and you haven't indented it yet. It can be distracting and misleading to suddenly have both statements light up as errors. Therefore, lint will avoid including this check when running on the fly in the editor, unless it looks like the file has not been recently edited. With this option, you can turn it on in all cases.<br/>
+<br/>
+To configure this option, use a `lint.xml` file in the project or source folder using an <code>&lt;option&gt;</code> block like the following:
+<pre class="errorlines">
+<span class="lineno"> 1 </span><span class="tag">&lt;lint></span>
+<span class="lineno"> 2 </span>    <span class="tag">&lt;issue</span><span class="attribute"> id</span>=<span class="value">"SuspiciousIndentation"</span>>
+<span class="caretline"><span class="lineno"> 3 </span>        <span class="tag">&lt;option</span><span class="attribute"> name</span>=<span class="warning"><span class="value">"always-run"</span> <span class="attribute">value</span>=<span class="value">"false"</span></span> />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+<span class="lineno"> 4 </span>    <span class="tag">&lt;/issue></span>
+<span class="lineno"> 5 </span><span class="tag">&lt;/lint></span>
+</pre>
+</div>To suppress this error, use the issue id "SuspiciousIndentation" as explained in the <a href="#SuppressInfo">Suppressing Warnings and Errors</a> section.<br/>
+<br/></div>
+</div>
+</div>
+<div class="chips">
+<span class="mdl-chip">
+    <span class="mdl-chip__text">SuspiciousIndentation</span>
+</span>
+<span class="mdl-chip">
+    <span class="mdl-chip__text">Correctness</span>
+</span>
+<span class="mdl-chip">
+    <span class="mdl-chip__text">Warning</span>
+</span>
+<span class="mdl-chip">
+    <span class="mdl-chip__text">Priority 6/10</span>
+</span>
+</div>
+              </div>
+              <div class="mdl-card__actions mdl-card--border">
+<button class="mdl-button mdl-js-button mdl-js-ripple-effect" id="explanationSuspiciousIndentationLink" onclick="reveal('explanationSuspiciousIndentation');">
+Explain</button><button class="mdl-button mdl-js-button mdl-js-ripple-effect" id="SuspiciousIndentationCardLink" onclick="hideid('SuspiciousIndentationCard');">
+Dismiss</button>            </div>
+            </div>
+          </section><a name="AndroidGradlePluginVersion"></a>
 <section class="section--center mdl-grid mdl-grid--no-spacing mdl-shadow--2dp" id="AndroidGradlePluginVersionCard" style="display: block;">
             <div class="mdl-card mdl-cell mdl-cell--12-col">
   <div class="mdl-card__title">
@@ -255,7 +420,7 @@ Dismiss</button>            </div>
               <div class="mdl-card__supporting-text">
 <div class="issue">
 <div class="warningslist">
-<span class="location"><a href="../../../gradle/libs.versions.toml">../../../gradle/libs.versions.toml</a>:2</span>: <span class="message">A newer version of com.android.application than 8.3.2 is available: 8.6.0</span><br /><pre class="errorlines">
+<span class="location"><a href="../../../gradle/libs.versions.toml">../../../gradle/libs.versions.toml</a>:2</span>: <span class="message">A newer version of com.android.application than 8.3.2 is available: 8.7.3</span><br /><pre class="errorlines">
 <span class="lineno">  1 </span>[versions]
 <span class="caretline"><span class="lineno">  2 </span>agp = <span class="warning">"8.3.2"</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
 <span class="lineno">  3 </span>junit = "4.13.2"
@@ -263,7 +428,7 @@ Dismiss</button>            </div>
 <span class="lineno">  5 </span>espressoCore = "3.5.1"
 </pre>
 
-<span class="location"><a href="../../../gradle/libs.versions.toml">../../../gradle/libs.versions.toml</a>:2</span>: <span class="message">A newer version of com.android.application than 8.3.2 is available: 8.6.0</span><br /><pre class="errorlines">
+<span class="location"><a href="../../../gradle/libs.versions.toml">../../../gradle/libs.versions.toml</a>:2</span>: <span class="message">A newer version of com.android.application than 8.3.2 is available: 8.7.3</span><br /><pre class="errorlines">
 <span class="lineno">  1 </span>[versions]
 <span class="caretline"><span class="lineno">  2 </span>agp = <span class="warning">"8.3.2"</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
 <span class="lineno">  3 </span>junit = "4.13.2"
@@ -271,7 +436,7 @@ Dismiss</button>            </div>
 <span class="lineno">  5 </span>espressoCore = "3.5.1"
 </pre>
 
-<span class="location"><a href="../../../gradle/libs.versions.toml">../../../gradle/libs.versions.toml</a>:2</span>: <span class="message">A newer version of com.android.application than 8.3.2 is available: 8.6.0</span><br /><pre class="errorlines">
+<span class="location"><a href="../../../gradle/libs.versions.toml">../../../gradle/libs.versions.toml</a>:2</span>: <span class="message">A newer version of com.android.application than 8.3.2 is available: 8.7.3</span><br /><pre class="errorlines">
 <span class="lineno">  1 </span>[versions]
 <span class="caretline"><span class="lineno">  2 </span>agp = <span class="warning">"8.3.2"</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
 <span class="lineno">  3 </span>junit = "4.13.2"
@@ -546,11 +711,11 @@ Dismiss</button>            </div>
               <div class="mdl-card__supporting-text">
 <div class="issue">
 <div class="warningslist">
-<span class="location"><a href="../../src/main/res/mipmap-hdpi/vimeo.png">../../src/main/res/mipmap-hdpi/vimeo.png</a></span>: <img class="embedimage" align="right" src="../../src/main/res/mipmap-hdpi/vimeo.png" /><span class="message">Launcher icon used as round icon did not have a circular shape</span><br clear="right"/>
-<span class="location"><a href="../../src/main/res/mipmap-mdpi/vimeo.png">../../src/main/res/mipmap-mdpi/vimeo.png</a></span>: <img class="embedimage" align="right" src="../../src/main/res/mipmap-mdpi/vimeo.png" /><span class="message">Launcher icon used as round icon did not have a circular shape</span><br clear="right"/>
-<span class="location"><a href="../../src/main/res/mipmap-xhdpi/vimeo.png">../../src/main/res/mipmap-xhdpi/vimeo.png</a></span>: <img class="embedimage" align="right" src="../../src/main/res/mipmap-xhdpi/vimeo.png" /><span class="message">Launcher icon used as round icon did not have a circular shape</span><br clear="right"/>
-<span class="location"><a href="../../src/main/res/mipmap-xxhdpi/vimeo.png">../../src/main/res/mipmap-xxhdpi/vimeo.png</a></span>: <img class="embedimage" align="right" src="../../src/main/res/mipmap-xxhdpi/vimeo.png" /><span class="message">Launcher icon used as round icon did not have a circular shape</span><br clear="right"/>
-<span class="location"><a href="../../src/main/res/mipmap-xxxhdpi/vimeo.png">../../src/main/res/mipmap-xxxhdpi/vimeo.png</a></span>: <img class="embedimage" align="right" src="../../src/main/res/mipmap-xxxhdpi/vimeo.png" /><span class="message">Launcher icon used as round icon did not have a circular shape</span><br clear="right"/>
+<span class="location"><a href="../../src/main/res/mipmap-hdpi/myicon.png">../../src/main/res/mipmap-hdpi/myicon.png</a></span>: <img class="embedimage" align="right" src="../../src/main/res/mipmap-hdpi/myicon.png" /><span class="message">Launcher icon used as round icon did not have a circular shape</span><br clear="right"/>
+<span class="location"><a href="../../src/main/res/mipmap-mdpi/myicon.png">../../src/main/res/mipmap-mdpi/myicon.png</a></span>: <img class="embedimage" align="right" src="../../src/main/res/mipmap-mdpi/myicon.png" /><span class="message">Launcher icon used as round icon did not have a circular shape</span><br clear="right"/>
+<span class="location"><a href="../../src/main/res/mipmap-xhdpi/myicon.png">../../src/main/res/mipmap-xhdpi/myicon.png</a></span>: <img class="embedimage" align="right" src="../../src/main/res/mipmap-xhdpi/myicon.png" /><span class="message">Launcher icon used as round icon did not have a circular shape</span><br clear="right"/>
+<span class="location"><a href="../../src/main/res/mipmap-xxhdpi/myicon.png">../../src/main/res/mipmap-xxhdpi/myicon.png</a></span>: <img class="embedimage" align="right" src="../../src/main/res/mipmap-xxhdpi/myicon.png" /><span class="message">Launcher icon used as round icon did not have a circular shape</span><br clear="right"/>
+<span class="location"><a href="../../src/main/res/mipmap-xxxhdpi/myicon.png">../../src/main/res/mipmap-xxxhdpi/myicon.png</a></span>: <img class="embedimage" align="right" src="../../src/main/res/mipmap-xxxhdpi/myicon.png" /><span class="message">Launcher icon used as round icon did not have a circular shape</span><br clear="right"/>
 </div>
 <div class="metadata"><div class="explanation" id="explanationIconLauncherShape" style="display: none;">
 According to the Android Design Guide (<a href="https://d.android.com/r/studio-ui/designer/material/iconography">https://d.android.com/r/studio-ui/designer/material/iconography</a>) your launcher icons should "use a distinct silhouette", a "three-dimensional, front view, with a slight perspective as if viewed from above, so that users perceive some depth."<br/>
@@ -591,22 +756,22 @@ Dismiss</button>            </div>
               <div class="mdl-card__supporting-text">
 <div class="issue">
 <div class="warningslist">
-<span class="location"><a href="../../src/main/res/mipmap-xxxhdpi/vimeo.png">../../src/main/res/mipmap-xxxhdpi/vimeo.png</a></span>: <span class="message">The image <code>vimeo.png</code> varies significantly in its density-independent (dip) size across the various density versions: mipmap-hdpi/vimeo.png: 341x341 dp (512x512 px), mipmap-mdpi/vimeo.png: 512x512 dp (512x512 px), mipmap-xhdpi/vimeo.png: 256x256 dp (512x512 px), mipmap-xxhdpi/vimeo.png: 171x171 dp (512x512 px), mipmap-xxxhdpi/vimeo.png: 128x128 dp (512x512 px)</span><br />
+<span class="location"><a href="../../src/main/res/mipmap-xxxhdpi/myicon.png">../../src/main/res/mipmap-xxxhdpi/myicon.png</a></span>: <span class="message">The image <code>myicon.png</code> varies significantly in its density-independent (dip) size across the various density versions: mipmap-hdpi/myicon.png: 341x341 dp (512x512 px), mipmap-mdpi/myicon.png: 512x512 dp (512x512 px), mipmap-xhdpi/myicon.png: 256x256 dp (512x512 px), mipmap-xxhdpi/myicon.png: 171x171 dp (512x512 px), mipmap-xxxhdpi/myicon.png: 128x128 dp (512x512 px)</span><br />
 <ul></ul><button id="Location1DivLink" onclick="reveal('Location1Div');" />+ 4 Additional Locations...</button>
 <div id="Location1Div" style="display: none">
 Additional locations: <ul>
-<li> <span class="location"><a href="../../src/main/res/mipmap-xxhdpi/vimeo.png">../../src/main/res/mipmap-xxhdpi/vimeo.png</a></span>
-<li> <span class="location"><a href="../../src/main/res/mipmap-xhdpi/vimeo.png">../../src/main/res/mipmap-xhdpi/vimeo.png</a></span>
-<li> <span class="location"><a href="../../src/main/res/mipmap-hdpi/vimeo.png">../../src/main/res/mipmap-hdpi/vimeo.png</a></span>
-<li> <span class="location"><a href="../../src/main/res/mipmap-mdpi/vimeo.png">../../src/main/res/mipmap-mdpi/vimeo.png</a></span>
+<li> <span class="location"><a href="../../src/main/res/mipmap-xxhdpi/myicon.png">../../src/main/res/mipmap-xxhdpi/myicon.png</a></span>
+<li> <span class="location"><a href="../../src/main/res/mipmap-xhdpi/myicon.png">../../src/main/res/mipmap-xhdpi/myicon.png</a></span>
+<li> <span class="location"><a href="../../src/main/res/mipmap-hdpi/myicon.png">../../src/main/res/mipmap-hdpi/myicon.png</a></span>
+<li> <span class="location"><a href="../../src/main/res/mipmap-mdpi/myicon.png">../../src/main/res/mipmap-mdpi/myicon.png</a></span>
 </ul>
 </div><br/><br/>
 <table>
-<tr><td><a href="../../src/main/res/mipmap-mdpi/vimeo.png"><img border="0" align="top" src="../../src/main/res/mipmap-mdpi/vimeo.png" /></a>
-</td><td><a href="../../src/main/res/mipmap-hdpi/vimeo.png"><img border="0" align="top" src="../../src/main/res/mipmap-hdpi/vimeo.png" /></a>
-</td><td><a href="../../src/main/res/mipmap-xhdpi/vimeo.png"><img border="0" align="top" src="../../src/main/res/mipmap-xhdpi/vimeo.png" /></a>
-</td><td><a href="../../src/main/res/mipmap-xxhdpi/vimeo.png"><img border="0" align="top" src="../../src/main/res/mipmap-xxhdpi/vimeo.png" /></a>
-</td><td><a href="../../src/main/res/mipmap-xxxhdpi/vimeo.png"><img border="0" align="top" src="../../src/main/res/mipmap-xxxhdpi/vimeo.png" /></a>
+<tr><td><a href="../../src/main/res/mipmap-mdpi/myicon.png"><img border="0" align="top" src="../../src/main/res/mipmap-mdpi/myicon.png" /></a>
+</td><td><a href="../../src/main/res/mipmap-hdpi/myicon.png"><img border="0" align="top" src="../../src/main/res/mipmap-hdpi/myicon.png" /></a>
+</td><td><a href="../../src/main/res/mipmap-xhdpi/myicon.png"><img border="0" align="top" src="../../src/main/res/mipmap-xhdpi/myicon.png" /></a>
+</td><td><a href="../../src/main/res/mipmap-xxhdpi/myicon.png"><img border="0" align="top" src="../../src/main/res/mipmap-xxhdpi/myicon.png" /></a>
+</td><td><a href="../../src/main/res/mipmap-xxxhdpi/myicon.png"><img border="0" align="top" src="../../src/main/res/mipmap-xxxhdpi/myicon.png" /></a>
 </td></tr><tr><th></th><th></th><th></th><th></th><th></th></tr>
 </table>
 </div>
@@ -647,22 +812,22 @@ Dismiss</button>            </div>
               <div class="mdl-card__supporting-text">
 <div class="issue">
 <div class="warningslist">
-<span class="location"><a href="../../src/main/res/mipmap-xxxhdpi/vimeo.png">../../src/main/res/mipmap-xxxhdpi/vimeo.png</a></span>: <span class="message">The <code>vimeo.png</code> icon has identical contents in the following configuration folders: mipmap-hdpi, mipmap-mdpi, mipmap-xhdpi, mipmap-xxhdpi, mipmap-xxxhdpi</span><br />
+<span class="location"><a href="../../src/main/res/mipmap-xxxhdpi/myicon.png">../../src/main/res/mipmap-xxxhdpi/myicon.png</a></span>: <span class="message">The <code>myicon.png</code> icon has identical contents in the following configuration folders: mipmap-hdpi, mipmap-mdpi, mipmap-xhdpi, mipmap-xxhdpi, mipmap-xxxhdpi</span><br />
 <ul></ul><button id="Location1DivLink" onclick="reveal('Location1Div');" />+ 4 Additional Locations...</button>
 <div id="Location1Div" style="display: none">
 Additional locations: <ul>
-<li> <span class="location"><a href="../../src/main/res/mipmap-xxhdpi/vimeo.png">../../src/main/res/mipmap-xxhdpi/vimeo.png</a></span>
-<li> <span class="location"><a href="../../src/main/res/mipmap-xhdpi/vimeo.png">../../src/main/res/mipmap-xhdpi/vimeo.png</a></span>
-<li> <span class="location"><a href="../../src/main/res/mipmap-mdpi/vimeo.png">../../src/main/res/mipmap-mdpi/vimeo.png</a></span>
-<li> <span class="location"><a href="../../src/main/res/mipmap-hdpi/vimeo.png">../../src/main/res/mipmap-hdpi/vimeo.png</a></span>
+<li> <span class="location"><a href="../../src/main/res/mipmap-xxhdpi/myicon.png">../../src/main/res/mipmap-xxhdpi/myicon.png</a></span>
+<li> <span class="location"><a href="../../src/main/res/mipmap-xhdpi/myicon.png">../../src/main/res/mipmap-xhdpi/myicon.png</a></span>
+<li> <span class="location"><a href="../../src/main/res/mipmap-mdpi/myicon.png">../../src/main/res/mipmap-mdpi/myicon.png</a></span>
+<li> <span class="location"><a href="../../src/main/res/mipmap-hdpi/myicon.png">../../src/main/res/mipmap-hdpi/myicon.png</a></span>
 </ul>
 </div><br/><br/>
 <table>
-<tr><td><a href="../../src/main/res/mipmap-mdpi/vimeo.png"><img border="0" align="top" src="../../src/main/res/mipmap-mdpi/vimeo.png" /></a>
-</td><td><a href="../../src/main/res/mipmap-hdpi/vimeo.png"><img border="0" align="top" src="../../src/main/res/mipmap-hdpi/vimeo.png" /></a>
-</td><td><a href="../../src/main/res/mipmap-xhdpi/vimeo.png"><img border="0" align="top" src="../../src/main/res/mipmap-xhdpi/vimeo.png" /></a>
-</td><td><a href="../../src/main/res/mipmap-xxhdpi/vimeo.png"><img border="0" align="top" src="../../src/main/res/mipmap-xxhdpi/vimeo.png" /></a>
-</td><td><a href="../../src/main/res/mipmap-xxxhdpi/vimeo.png"><img border="0" align="top" src="../../src/main/res/mipmap-xxxhdpi/vimeo.png" /></a>
+<tr><td><a href="../../src/main/res/mipmap-mdpi/myicon.png"><img border="0" align="top" src="../../src/main/res/mipmap-mdpi/myicon.png" /></a>
+</td><td><a href="../../src/main/res/mipmap-hdpi/myicon.png"><img border="0" align="top" src="../../src/main/res/mipmap-hdpi/myicon.png" /></a>
+</td><td><a href="../../src/main/res/mipmap-xhdpi/myicon.png"><img border="0" align="top" src="../../src/main/res/mipmap-xhdpi/myicon.png" /></a>
+</td><td><a href="../../src/main/res/mipmap-xxhdpi/myicon.png"><img border="0" align="top" src="../../src/main/res/mipmap-xxhdpi/myicon.png" /></a>
+</td><td><a href="../../src/main/res/mipmap-xxxhdpi/myicon.png"><img border="0" align="top" src="../../src/main/res/mipmap-xxxhdpi/myicon.png" /></a>
 </td></tr><tr><th></th><th></th><th></th><th></th><th></th></tr>
 </table>
 </div>
@@ -705,14 +870,14 @@ Dismiss</button>            </div>
               <div class="mdl-card__supporting-text">
 <div class="issue">
 <div class="warningslist">
-<span class="location"><a href="../../src/main/java/com/vmk/gles_blue/GLESView.java">../../src/main/java/com/vmk/gles_blue/GLESView.java</a>:64</span>: <span class="message">Custom view <code>GLESView</code> overrides <code>onTouchEvent</code> but not <code>performClick</code></span><br /><pre class="errorlines">
-<span class="lineno">  61 </span>
-<span class="lineno">  62 </span>    <span class="comment">// Implementation of OnTouch Event of viewClass</span>
-<span class="lineno">  63 </span>    <span class="annotation">@Override</span> 
-<span class="caretline"><span class="lineno">  64 </span>        <span class="keyword">public</span> <span class="keyword">boolean</span> <span class="warning">onTouchEvent</span>(MotionEvent e)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
-<span class="lineno">  65 </span>        {
-<span class="lineno">  66 </span>            <span class="keyword">if</span>(!gestureDetector.onTouchEvent(e))
-<span class="lineno">  67 </span>            {
+<span class="location"><a href="../../src/main/java/com/vmk/PerspectiveTriangle/BW/GLESView.java">../../src/main/java/com/vmk/PerspectiveTriangle/BW/GLESView.java</a>:74</span>: <span class="message">Custom view <code>GLESView</code> overrides <code>onTouchEvent</code> but not <code>performClick</code></span><br /><pre class="errorlines">
+<span class="lineno">  71 </span>
+<span class="lineno">  72 </span>    <span class="comment">//implementation of onTouch event method of viewclass</span>
+<span class="lineno">  73 </span>    <span class="annotation">@Override</span>
+<span class="caretline"><span class="lineno">  74 </span>    <span class="keyword">public</span> <span class="keyword">boolean</span> <span class="warning">onTouchEvent</span>(MotionEvent e)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+<span class="lineno">  75 </span>    {
+<span class="lineno">  76 </span>        <span class="keyword">if</span>(!gestureDetector.onTouchEvent(e))
+<span class="lineno">  77 </span>        {
 </pre>
 
 </div>

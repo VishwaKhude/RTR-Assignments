@@ -1,6 +1,6 @@
 <lint-module
     format="1"
-    dir="D:\rtr-130\01_OpenGL\02_PP\04_Android\07-BlueScreen\app"
+    dir="D:\rtr-130\01_OpenGL\02_PP\04_Android\08-PerspectiveTriangle\app"
     name=":app"
     type="APP"
     maven="Window:app:"

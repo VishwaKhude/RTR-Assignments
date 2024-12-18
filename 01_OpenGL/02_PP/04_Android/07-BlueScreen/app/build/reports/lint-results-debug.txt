@@ -1,10 +1,10 @@
-D:\rtr-130\01_OpenGL\02_PP\04_Android\07-BlueScreen\gradle\libs.versions.toml:2: Warning: A newer version of com.android.application than 8.3.2 is available: 8.6.0 [AndroidGradlePluginVersion]
+D:\rtr-130\01_OpenGL\02_PP\04_Android\07-BlueScreen\gradle\libs.versions.toml:2: Warning: A newer version of com.android.application than 8.3.2 is available: 8.7.3 [AndroidGradlePluginVersion]
 agp = "8.3.2"
       ~~~~~~~
-D:\rtr-130\01_OpenGL\02_PP\04_Android\07-BlueScreen\gradle\libs.versions.toml:2: Warning: A newer version of com.android.application than 8.3.2 is available: 8.6.0 [AndroidGradlePluginVersion]
+D:\rtr-130\01_OpenGL\02_PP\04_Android\07-BlueScreen\gradle\libs.versions.toml:2: Warning: A newer version of com.android.application than 8.3.2 is available: 8.7.3 [AndroidGradlePluginVersion]
 agp = "8.3.2"
       ~~~~~~~
-D:\rtr-130\01_OpenGL\02_PP\04_Android\07-BlueScreen\gradle\libs.versions.toml:2: Warning: A newer version of com.android.application than 8.3.2 is available: 8.6.0 [AndroidGradlePluginVersion]
+D:\rtr-130\01_OpenGL\02_PP\04_Android\07-BlueScreen\gradle\libs.versions.toml:2: Warning: A newer version of com.android.application than 8.3.2 is available: 8.7.3 [AndroidGradlePluginVersion]
 agp = "8.3.2"
       ~~~~~~~
 
@@ -86,11 +86,11 @@ D:\rtr-130\01_OpenGL\02_PP\04_Android\07-BlueScreen\app\src\main\res\mipmap-anyd
    lint.unused-resources.exclude-tests =true.
    ,
 
-D:\rtr-130\01_OpenGL\02_PP\04_Android\07-BlueScreen\app\src\main\res\mipmap-hdpi\vimeo.png: Warning: Launcher icon used as round icon did not have a circular shape [IconLauncherShape]
-D:\rtr-130\01_OpenGL\02_PP\04_Android\07-BlueScreen\app\src\main\res\mipmap-mdpi\vimeo.png: Warning: Launcher icon used as round icon did not have a circular shape [IconLauncherShape]
-D:\rtr-130\01_OpenGL\02_PP\04_Android\07-BlueScreen\app\src\main\res\mipmap-xhdpi\vimeo.png: Warning: Launcher icon used as round icon did not have a circular shape [IconLauncherShape]
-D:\rtr-130\01_OpenGL\02_PP\04_Android\07-BlueScreen\app\src\main\res\mipmap-xxhdpi\vimeo.png: Warning: Launcher icon used as round icon did not have a circular shape [IconLauncherShape]
-D:\rtr-130\01_OpenGL\02_PP\04_Android\07-BlueScreen\app\src\main\res\mipmap-xxxhdpi\vimeo.png: Warning: Launcher icon used as round icon did not have a circular shape [IconLauncherShape]
+D:\rtr-130\01_OpenGL\02_PP\04_Android\07-BlueScreen\app\src\main\res\mipmap-hdpi\myicon.png: Warning: Launcher icon used as round icon did not have a circular shape [IconLauncherShape]
+D:\rtr-130\01_OpenGL\02_PP\04_Android\07-BlueScreen\app\src\main\res\mipmap-mdpi\myicon.png: Warning: Launcher icon used as round icon did not have a circular shape [IconLauncherShape]
+D:\rtr-130\01_OpenGL\02_PP\04_Android\07-BlueScreen\app\src\main\res\mipmap-xhdpi\myicon.png: Warning: Launcher icon used as round icon did not have a circular shape [IconLauncherShape]
+D:\rtr-130\01_OpenGL\02_PP\04_Android\07-BlueScreen\app\src\main\res\mipmap-xxhdpi\myicon.png: Warning: Launcher icon used as round icon did not have a circular shape [IconLauncherShape]
+D:\rtr-130\01_OpenGL\02_PP\04_Android\07-BlueScreen\app\src\main\res\mipmap-xxxhdpi\myicon.png: Warning: Launcher icon used as round icon did not have a circular shape [IconLauncherShape]
 
    Explanation for issues of type "IconLauncherShape":
    According to the Android Design Guide
@@ -102,7 +102,7 @@ D:\rtr-130\01_OpenGL\02_PP\04_Android\07-BlueScreen\app\src\main\res\mipmap-xxxh
    The unique silhouette implies that your launcher icon should not be a
    filled square.
 
-D:\rtr-130\01_OpenGL\02_PP\04_Android\07-BlueScreen\app\src\main\res\mipmap-xxxhdpi\vimeo.png: Warning: The image vimeo.png varies significantly in its density-independent (dip) size across the various density versions: mipmap-hdpi/vimeo.png: 341x341 dp (512x512 px), mipmap-mdpi/vimeo.png: 512x512 dp (512x512 px), mipmap-xhdpi/vimeo.png: 256x256 dp (512x512 px), mipmap-xxhdpi/vimeo.png: 171x171 dp (512x512 px), mipmap-xxxhdpi/vimeo.png: 128x128 dp (512x512 px) [IconDipSize]
+D:\rtr-130\01_OpenGL\02_PP\04_Android\07-BlueScreen\app\src\main\res\mipmap-xxxhdpi\myicon.png: Warning: The image myicon.png varies significantly in its density-independent (dip) size across the various density versions: mipmap-hdpi/myicon.png: 341x341 dp (512x512 px), mipmap-mdpi/myicon.png: 512x512 dp (512x512 px), mipmap-xhdpi/myicon.png: 256x256 dp (512x512 px), mipmap-xxhdpi/myicon.png: 171x171 dp (512x512 px), mipmap-xxxhdpi/myicon.png: 128x128 dp (512x512 px) [IconDipSize]
 
    Explanation for issues of type "IconDipSize":
    Checks the all icons which are provided in multiple densities, all compute
@@ -110,7 +110,7 @@ D:\rtr-130\01_OpenGL\02_PP\04_Android\07-BlueScreen\app\src\main\res\mipmap-xxxh
    errors where images are either placed in the wrong folder, or icons are
    changed to new sizes but some folders are forgotten.
 
-D:\rtr-130\01_OpenGL\02_PP\04_Android\07-BlueScreen\app\src\main\res\mipmap-xxxhdpi\vimeo.png: Warning: The vimeo.png icon has identical contents in the following configuration folders: mipmap-hdpi, mipmap-mdpi, mipmap-xhdpi, mipmap-xxhdpi, mipmap-xxxhdpi [IconDuplicatesConfig]
+D:\rtr-130\01_OpenGL\02_PP\04_Android\07-BlueScreen\app\src\main\res\mipmap-xxxhdpi\myicon.png: Warning: The myicon.png icon has identical contents in the following configuration folders: mipmap-hdpi, mipmap-mdpi, mipmap-xhdpi, mipmap-xxhdpi, mipmap-xxxhdpi [IconDuplicatesConfig]
 
    Explanation for issues of type "IconDuplicatesConfig":
    If an icon is provided under different configuration parameters such as
@@ -118,7 +118,7 @@ D:\rtr-130\01_OpenGL\02_PP\04_Android\07-BlueScreen\app\src\main\res\mipmap-xxxh
    catches cases where the same icon is provided in different configuration
    folder which is usually not intentional.
 
-D:\rtr-130\01_OpenGL\02_PP\04_Android\07-BlueScreen\app\src\main\java\com\vmk\gles_blue\GLESView.java:64: Warning: Custom view GLESView overrides onTouchEvent but not performClick [ClickableViewAccessibility]
+D:\rtr-130\01_OpenGL\02_PP\04_Android\07-BlueScreen\app\src\main\java\com\vmk\gles_blue\GLESView.java:59: Warning: Custom view GLESView overrides onTouchEvent but not performClick [ClickableViewAccessibility]
     public boolean onTouchEvent(MotionEvent e)
                    ~~~~~~~~~~~~
 

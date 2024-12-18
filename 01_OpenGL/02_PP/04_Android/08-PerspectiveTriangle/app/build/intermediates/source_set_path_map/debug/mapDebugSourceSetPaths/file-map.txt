@@ -25,10 +25,10 @@ com.vmk.gles_blue.app-core-runtime-2.2.0-23 C:\Users\Vishwa\.gradle\caches\trans
 com.vmk.gles_blue.app-startup-runtime-1.1.1-24 C:\Users\Vishwa\.gradle\caches\transforms-3\d6b0f21c0343b8ec037f2a3addab8a9e\transformed\startup-runtime-1.1.1\res
 com.vmk.gles_blue.app-lifecycle-livedata-2.6.1-25 C:\Users\Vishwa\.gradle\caches\transforms-3\d96a9a6abe544c8c84dd26b8c98e29b1\transformed\lifecycle-livedata-2.6.1\res
 com.vmk.gles_blue.app-recyclerview-1.1.0-26 C:\Users\Vishwa\.gradle\caches\transforms-3\f480abcfe063c440cc22613dc2efbeb0\transformed\recyclerview-1.1.0\res
-com.vmk.gles_blue.app-pngs-27 D:\rtr-130\01_OpenGL\02_PP\04_Android\07-BlueScreen\app\build\generated\res\pngs\debug
-com.vmk.gles_blue.app-resValues-28 D:\rtr-130\01_OpenGL\02_PP\04_Android\07-BlueScreen\app\build\generated\res\resValues\debug
-com.vmk.gles_blue.app-packageDebugResources-29 D:\rtr-130\01_OpenGL\02_PP\04_Android\07-BlueScreen\app\build\intermediates\incremental\debug\packageDebugResources\merged.dir
-com.vmk.gles_blue.app-packageDebugResources-30 D:\rtr-130\01_OpenGL\02_PP\04_Android\07-BlueScreen\app\build\intermediates\incremental\debug\packageDebugResources\stripped.dir
-com.vmk.gles_blue.app-debug-31 D:\rtr-130\01_OpenGL\02_PP\04_Android\07-BlueScreen\app\build\intermediates\merged_res\debug\mergeDebugResources
-com.vmk.gles_blue.app-debug-32 D:\rtr-130\01_OpenGL\02_PP\04_Android\07-BlueScreen\app\src\debug\res
-com.vmk.gles_blue.app-main-33 D:\rtr-130\01_OpenGL\02_PP\04_Android\07-BlueScreen\app\src\main\res
+com.vmk.gles_blue.app-pngs-27 D:\rtr-130\01_OpenGL\02_PP\04_Android\08-PerspectiveTriangle\app\build\generated\res\pngs\debug
+com.vmk.gles_blue.app-resValues-28 D:\rtr-130\01_OpenGL\02_PP\04_Android\08-PerspectiveTriangle\app\build\generated\res\resValues\debug
+com.vmk.gles_blue.app-packageDebugResources-29 D:\rtr-130\01_OpenGL\02_PP\04_Android\08-PerspectiveTriangle\app\build\intermediates\incremental\debug\packageDebugResources\merged.dir
+com.vmk.gles_blue.app-packageDebugResources-30 D:\rtr-130\01_OpenGL\02_PP\04_Android\08-PerspectiveTriangle\app\build\intermediates\incremental\debug\packageDebugResources\stripped.dir
+com.vmk.gles_blue.app-debug-31 D:\rtr-130\01_OpenGL\02_PP\04_Android\08-PerspectiveTriangle\app\build\intermediates\merged_res\debug\mergeDebugResources
+com.vmk.gles_blue.app-debug-32 D:\rtr-130\01_OpenGL\02_PP\04_Android\08-PerspectiveTriangle\app\src\debug\res
+com.vmk.gles_blue.app-main-33 D:\rtr-130\01_OpenGL\02_PP\04_Android\08-PerspectiveTriangle\app\src\main\res

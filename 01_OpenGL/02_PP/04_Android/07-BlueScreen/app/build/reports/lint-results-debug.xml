@@ -4,7 +4,7 @@
     <issue
         id="AndroidGradlePluginVersion"
         severity="Warning"
-        message="A newer version of com.android.application than 8.3.2 is available: 8.6.0"
+        message="A newer version of com.android.application than 8.3.2 is available: 8.7.3"
         category="Correctness"
         priority="4"
         summary="Obsolete Android Gradle Plugin Version"
@@ -20,7 +20,7 @@
     <issue
         id="AndroidGradlePluginVersion"
         severity="Warning"
-        message="A newer version of com.android.application than 8.3.2 is available: 8.6.0"
+        message="A newer version of com.android.application than 8.3.2 is available: 8.7.3"
         category="Correctness"
         priority="4"
         summary="Obsolete Android Gradle Plugin Version"
@@ -36,7 +36,7 @@
     <issue
         id="AndroidGradlePluginVersion"
         severity="Warning"
-        message="A newer version of com.android.application than 8.3.2 is available: 8.6.0"
+        message="A newer version of com.android.application than 8.3.2 is available: 8.7.3"
         category="Correctness"
         priority="4"
         summary="Obsolete Android Gradle Plugin Version"
@@ -314,7 +314,7 @@
         summary="The launcher icon shape should use a distinct silhouette"
         explanation="According to the Android Design Guide (https://d.android.com/r/studio-ui/designer/material/iconography) your launcher icons should &quot;use a distinct silhouette&quot;, a &quot;three-dimensional, front view, with a slight perspective as if viewed from above, so that users perceive some depth.&quot;&#xA;&#xA;The unique silhouette implies that your launcher icon should not be a filled square.">
         <location
-            file="D:\rtr-130\01_OpenGL\02_PP\04_Android\07-BlueScreen\app\src\main\res\mipmap-hdpi\vimeo.png"/>
+            file="D:\rtr-130\01_OpenGL\02_PP\04_Android\07-BlueScreen\app\src\main\res\mipmap-hdpi\myicon.png"/>
     </issue>
 
     <issue
@@ -326,7 +326,7 @@
         summary="The launcher icon shape should use a distinct silhouette"
         explanation="According to the Android Design Guide (https://d.android.com/r/studio-ui/designer/material/iconography) your launcher icons should &quot;use a distinct silhouette&quot;, a &quot;three-dimensional, front view, with a slight perspective as if viewed from above, so that users perceive some depth.&quot;&#xA;&#xA;The unique silhouette implies that your launcher icon should not be a filled square.">
         <location
-            file="D:\rtr-130\01_OpenGL\02_PP\04_Android\07-BlueScreen\app\src\main\res\mipmap-mdpi\vimeo.png"/>
+            file="D:\rtr-130\01_OpenGL\02_PP\04_Android\07-BlueScreen\app\src\main\res\mipmap-mdpi\myicon.png"/>
     </issue>
 
     <issue
@@ -338,7 +338,7 @@
         summary="The launcher icon shape should use a distinct silhouette"
         explanation="According to the Android Design Guide (https://d.android.com/r/studio-ui/designer/material/iconography) your launcher icons should &quot;use a distinct silhouette&quot;, a &quot;three-dimensional, front view, with a slight perspective as if viewed from above, so that users perceive some depth.&quot;&#xA;&#xA;The unique silhouette implies that your launcher icon should not be a filled square.">
         <location
-            file="D:\rtr-130\01_OpenGL\02_PP\04_Android\07-BlueScreen\app\src\main\res\mipmap-xhdpi\vimeo.png"/>
+            file="D:\rtr-130\01_OpenGL\02_PP\04_Android\07-BlueScreen\app\src\main\res\mipmap-xhdpi\myicon.png"/>
     </issue>
 
     <issue
@@ -350,7 +350,7 @@
         summary="The launcher icon shape should use a distinct silhouette"
         explanation="According to the Android Design Guide (https://d.android.com/r/studio-ui/designer/material/iconography) your launcher icons should &quot;use a distinct silhouette&quot;, a &quot;three-dimensional, front view, with a slight perspective as if viewed from above, so that users perceive some depth.&quot;&#xA;&#xA;The unique silhouette implies that your launcher icon should not be a filled square.">
         <location
-            file="D:\rtr-130\01_OpenGL\02_PP\04_Android\07-BlueScreen\app\src\main\res\mipmap-xxhdpi\vimeo.png"/>
+            file="D:\rtr-130\01_OpenGL\02_PP\04_Android\07-BlueScreen\app\src\main\res\mipmap-xxhdpi\myicon.png"/>
     </issue>
 
     <issue
@@ -362,47 +362,47 @@
         summary="The launcher icon shape should use a distinct silhouette"
         explanation="According to the Android Design Guide (https://d.android.com/r/studio-ui/designer/material/iconography) your launcher icons should &quot;use a distinct silhouette&quot;, a &quot;three-dimensional, front view, with a slight perspective as if viewed from above, so that users perceive some depth.&quot;&#xA;&#xA;The unique silhouette implies that your launcher icon should not be a filled square.">
         <location
-            file="D:\rtr-130\01_OpenGL\02_PP\04_Android\07-BlueScreen\app\src\main\res\mipmap-xxxhdpi\vimeo.png"/>
+            file="D:\rtr-130\01_OpenGL\02_PP\04_Android\07-BlueScreen\app\src\main\res\mipmap-xxxhdpi\myicon.png"/>
     </issue>
 
     <issue
         id="IconDipSize"
         severity="Warning"
-        message="The image `vimeo.png` varies significantly in its density-independent (dip) size across the various density versions: mipmap-hdpi/vimeo.png: 341x341 dp (512x512 px), mipmap-mdpi/vimeo.png: 512x512 dp (512x512 px), mipmap-xhdpi/vimeo.png: 256x256 dp (512x512 px), mipmap-xxhdpi/vimeo.png: 171x171 dp (512x512 px), mipmap-xxxhdpi/vimeo.png: 128x128 dp (512x512 px)"
+        message="The image `myicon.png` varies significantly in its density-independent (dip) size across the various density versions: mipmap-hdpi/myicon.png: 341x341 dp (512x512 px), mipmap-mdpi/myicon.png: 512x512 dp (512x512 px), mipmap-xhdpi/myicon.png: 256x256 dp (512x512 px), mipmap-xxhdpi/myicon.png: 171x171 dp (512x512 px), mipmap-xxxhdpi/myicon.png: 128x128 dp (512x512 px)"
         category="Usability:Icons"
         priority="5"
         summary="Icon density-independent size validation"
         explanation="Checks the all icons which are provided in multiple densities, all compute to roughly the same density-independent pixel (`dip`) size. This catches errors where images are either placed in the wrong folder, or icons are changed to new sizes but some folders are forgotten.">
         <location
-            file="D:\rtr-130\01_OpenGL\02_PP\04_Android\07-BlueScreen\app\src\main\res\mipmap-xxxhdpi\vimeo.png"/>
+            file="D:\rtr-130\01_OpenGL\02_PP\04_Android\07-BlueScreen\app\src\main\res\mipmap-xxxhdpi\myicon.png"/>
         <location
-            file="D:\rtr-130\01_OpenGL\02_PP\04_Android\07-BlueScreen\app\src\main\res\mipmap-xxhdpi\vimeo.png"/>
+            file="D:\rtr-130\01_OpenGL\02_PP\04_Android\07-BlueScreen\app\src\main\res\mipmap-xxhdpi\myicon.png"/>
         <location
-            file="D:\rtr-130\01_OpenGL\02_PP\04_Android\07-BlueScreen\app\src\main\res\mipmap-xhdpi\vimeo.png"/>
+            file="D:\rtr-130\01_OpenGL\02_PP\04_Android\07-BlueScreen\app\src\main\res\mipmap-xhdpi\myicon.png"/>
         <location
-            file="D:\rtr-130\01_OpenGL\02_PP\04_Android\07-BlueScreen\app\src\main\res\mipmap-hdpi\vimeo.png"/>
+            file="D:\rtr-130\01_OpenGL\02_PP\04_Android\07-BlueScreen\app\src\main\res\mipmap-hdpi\myicon.png"/>
         <location
-            file="D:\rtr-130\01_OpenGL\02_PP\04_Android\07-BlueScreen\app\src\main\res\mipmap-mdpi\vimeo.png"/>
+            file="D:\rtr-130\01_OpenGL\02_PP\04_Android\07-BlueScreen\app\src\main\res\mipmap-mdpi\myicon.png"/>
     </issue>
 
     <issue
         id="IconDuplicatesConfig"
         severity="Warning"
-        message="The `vimeo.png` icon has identical contents in the following configuration folders: mipmap-hdpi, mipmap-mdpi, mipmap-xhdpi, mipmap-xxhdpi, mipmap-xxxhdpi"
+        message="The `myicon.png` icon has identical contents in the following configuration folders: mipmap-hdpi, mipmap-mdpi, mipmap-xhdpi, mipmap-xxhdpi, mipmap-xxxhdpi"
         category="Usability:Icons"
         priority="5"
         summary="Identical bitmaps across various configurations"
         explanation="If an icon is provided under different configuration parameters such as `drawable-hdpi` or `-v11`, they should typically be different. This detector catches cases where the same icon is provided in different configuration folder which is usually not intentional.">
         <location
-            file="D:\rtr-130\01_OpenGL\02_PP\04_Android\07-BlueScreen\app\src\main\res\mipmap-xxxhdpi\vimeo.png"/>
+            file="D:\rtr-130\01_OpenGL\02_PP\04_Android\07-BlueScreen\app\src\main\res\mipmap-xxxhdpi\myicon.png"/>
         <location
-            file="D:\rtr-130\01_OpenGL\02_PP\04_Android\07-BlueScreen\app\src\main\res\mipmap-xxhdpi\vimeo.png"/>
+            file="D:\rtr-130\01_OpenGL\02_PP\04_Android\07-BlueScreen\app\src\main\res\mipmap-xxhdpi\myicon.png"/>
         <location
-            file="D:\rtr-130\01_OpenGL\02_PP\04_Android\07-BlueScreen\app\src\main\res\mipmap-xhdpi\vimeo.png"/>
+            file="D:\rtr-130\01_OpenGL\02_PP\04_Android\07-BlueScreen\app\src\main\res\mipmap-xhdpi\myicon.png"/>
         <location
-            file="D:\rtr-130\01_OpenGL\02_PP\04_Android\07-BlueScreen\app\src\main\res\mipmap-mdpi\vimeo.png"/>
+            file="D:\rtr-130\01_OpenGL\02_PP\04_Android\07-BlueScreen\app\src\main\res\mipmap-mdpi\myicon.png"/>
         <location
-            file="D:\rtr-130\01_OpenGL\02_PP\04_Android\07-BlueScreen\app\src\main\res\mipmap-hdpi\vimeo.png"/>
+            file="D:\rtr-130\01_OpenGL\02_PP\04_Android\07-BlueScreen\app\src\main\res\mipmap-hdpi\myicon.png"/>
     </issue>
 
     <issue
@@ -417,7 +417,7 @@
         errorLine2="                   ~~~~~~~~~~~~">
         <location
             file="D:\rtr-130\01_OpenGL\02_PP\04_Android\07-BlueScreen\app\src\main\java\com\vmk\gles_blue\GLESView.java"
-            line="64"
+            line="59"
             column="20"/>
     </issue>
 
