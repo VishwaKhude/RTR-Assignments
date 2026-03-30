@@ -1,4 +1,0 @@
-#Sat Dec 14 22:04:00 IST 2024
-base.0=D\:\\rtr-130\\01_OpenGL\\02_PP\\04_Android\\08-PerspectiveTriangle\\app\\build\\intermediates\\dex\\release\\mergeDexRelease\\classes.dex
-path.0=classes.dex
-renamed.0=classes.dex

@@ -1,52 +1,37 @@
-// Windows Header Files
-#include <windows.h> //sdk win32api
-#include <stdio.h>	 //file io
-#include <stdlib.h>	 //exit()
-#include <iostream>
+// OpenGL starts here...
+// Common Windows Header Files
+#include <windows.h>		  // same as <stdio.h> library function, // includes around 3,50,000 API's, Win32 API
+#include <stdio.h>            // For File I/O
+#include <stdlib.h>           // For exit()				
 
-// OpenGL Header File
-#include <GL/glew.h> //this must be before <GL/gl.h>
-#include <GL/gl.h>
+// OpenGl Header Files
+#include <GL/glew.h> // This must be before gl/GL.h
+#include <GL/gl.h> // '\' also works
 
+// header file for programmable pipeline
 #include "vmath.h"
 using namespace vmath;
 
-#include "OGL.h"
+#include "OGL.h"		      // Our HeaderFile   
 #include "Sphere.h"
 
-// macors
+//Macros
 #define WIN_WIDTH 800
 #define WIN_HEIGHT 600
+
+#define FBO_WIDTH 512
+#define FBO_HEIGHT 512
 
 // link with opengl library
 #pragma comment(lib, "glew32.lib")
 #pragma comment(lib, "opengl32.lib")
 #pragma comment(lib, "Sphere.lib")
 
-// Global Function Declarations
-LRESULT CALLBACK WndProc(HWND, UINT, WPARAM, LPARAM);
-
-// Global Variable Declarations
-
-// for fileIO
-FILE* gpFILE = NULL;
-
-// for fullscreen
-HWND ghwnd = NULL;
-DWORD dwStyle = 0;
-WINDOWPLACEMENT wpPrev = { sizeof(WINDOWPLACEMENT) };
-BOOL gbFullscreen = FALSE;
-
-// for active/inactive
-BOOL gbActiveWindow = FALSE;
-
-// OpenGL related global variables
+//OpenGl Related Global Variables
 HDC ghdc = NULL;
 HGLRC ghrc = NULL;
 
-GLuint pervertex_shaderProgramObject = 0;
-GLuint perfragment_shaderProgramObject = 0;
-
+GLuint shaderProgramObject_cube = 0;
 enum
 {
 	AMC_ATTRIBUTE_POSITION = 0,
@@ -55,6 +40,36 @@ enum
 	AMC_ATTRIBUTE_NORMAL
 };
 
+// for Triangle
+GLuint vao_pyramid = 0;
+GLuint vbo_position_pyramid = 0;
+GLuint vbo_texcoord_pyramid = 0;
+
+// for square
+GLuint vao_cube = 0;
+GLuint vbo_position_cube = 0;
+GLuint vbo_texcoord_cube = 0;
+
+// FBO
+GLint winWidth;
+GLint winHeight;
+
+GLuint mvpMatrixUniform_cube = 0;
+GLuint textureSamplerUniform_cube = 0;
+
+GLuint pervertex_shaderProgramObject_sphere = 0;
+GLuint perfragment_shaderProgramObject_sphere = 0;
+
+mat4 perspectiveProjectionMatrix_cube;		//mat4 is in vmath.h
+
+//texture object
+GLuint texture_kundali = 0;
+GLuint textureFBO = 0;
+
+GLfloat fAnglePyramid = 0.0f;
+GLfloat fAngleCube = 0.0f;
+
+// Sphere related
 struct Light
 {
 	vec3 ambient;
@@ -97,118 +112,117 @@ GLfloat materialDiffuse[] = { 1.0f, 1.0f, 1.0f, 1.0f };
 GLfloat materialSpecular[] = { 1.0f, 1.0f, 1.0f, 1.0f };
 GLfloat materialShininess = 128.0f;
 
-mat4 perspectiveProjetionMatrix;
+mat4 perspectiveProjetionMatrix_sphere;
 
 char chosenShader = 'v';
 
 float my_angle = 0.0f;
 
+// FBO Related Global Variables
+GLuint FBO = 0;
+GLuint RBO = 0;   // render buffer objects
+GLuint FBO_texture = 0;
+BOOL bFBOResult = FALSE;
+
+BOOL initializeSphere(GLint, GLint);
+
+// Global Function Declarations (Global because called by OS, _far, _pascal)      
+LRESULT CALLBACK WndProc(HWND, UINT, WPARAM, LPARAM); // (WndProc(Window Procedure) - Hungarian(Charles Simonee) Notation used) (CALLBACK FUNCTIONS), (HWND - Handle Window), (WPARAM - 16 Bit), (LPARAM - 32Bit)
+
+// Global Variable Declarations
+FILE* gpfile = NULL;          //Global Pointer
+
+HWND ghwnd = NULL;
+BOOL gbActive = FALSE;
+DWORD dwStyle = 0;
+WINDOWPLACEMENT wpPrev = { sizeof(WINDOWPLACEMENT) };
+BOOL gbFullscreen = FALSE;
+
 // Entry Point Function
-int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmdLine, int iCmdShow)
+int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmdLine, int iCmdShow) //Winmain(main function which gives window(Hungarian Notation Used)), lpsz(Long Pointer To Zero-Terminated String ('\0')), hPrevInstance - for backward compatibility
 {
-	// fucntion declaration
-	int initialize(void);
-	void uninitialize(void);
-	void display(void);
-	void update(void);
+	//Function Declarations 
+	int initialize_cube(void);
+	void uninitialize_cube(void);
+	void display_cube(void);
+	void update_cube(void);
 
 	// Local Variable Declarations
-	WNDCLASSEX wndclass;
-	HWND hwnd;
-	MSG msg;
-	TCHAR szAppName[] = TEXT(" VMKWindow ");
-
+	WNDCLASSEX wndclass;  // (wndclass)window, class(type), type or class of window EX(WND(window) Extended)
+	HWND hwnd;            //handle window (Unsigned Int)
+	MSG msg;             // struct
+	TCHAR szAppName[] = TEXT(" VMKWindow "); // szAppName - Zero Terminated String To App-Name ('\0'), TEXT (macro)
+											 // TEXT(macro) - similar to 'printf'
 	int iResult = 0;
+	BOOL bdone = FALSE;
 
-	BOOL bDone = FALSE; // game loop
-
-	// for centering
-	int ScreenHeight;
-	int ScreenWidth;
-	int WindowHeight = 600;
-	int WindowWidth = 800;
-
-	ScreenWidth = GetSystemMetrics(SM_CXSCREEN);
-	ScreenHeight = GetSystemMetrics(SM_CYSCREEN);
-
-	int X = ScreenWidth / 2 - WindowWidth / 2;
-	int Y = ScreenHeight / 2 - WindowHeight / 2;
-
-	// code
-	//	gpFILE = fopen("Log.txt", "w");
-	//	fopen_s
-	if (!AttachConsole(ATTACH_PARENT_PROCESS))
+	// Local Variable Declarations For Centering Of Window
+	int ScreenWidth = GetSystemMetrics(SM_CXSCREEN);
+	int ScreenHeight = GetSystemMetrics(SM_CYSCREEN);
+	
+	//code
+	gpfile = fopen("log.txt", "w");
+	if (gpfile == NULL)
 	{
-		AllocConsole();
-	}
-	freopen("CONOUT$", "w", stdout);
-	std::cout << "Log On Console" << std::endl;
-
-	if (fopen_s(&gpFILE, "Log.txt", "w") != 0)
-	{
-		MessageBox(NULL, TEXT("Log File Cannot Be Opend"), TEXT("Error"), MB_OK | MB_ICONERROR);
+		MessageBox(NULL, TEXT("Log File Cannot Be Opened"), TEXT("Error"), MB_OK | MB_ICONERROR);
 		exit(0);
 	}
+	fprintf(gpfile, "Program Started Successfully\n");
+	fprintf(gpfile, "***********************************************\n\n");
 
-	fprintf(gpFILE, "Program Started Successfully\n");
-	fprintf(gpFILE, "-------------------------------------------\n");
-
-	// WNDCEX initialization
-	wndclass.cbSize = sizeof(WNDCLASSEX);
-	wndclass.style = CS_HREDRAW | CS_VREDRAW | CS_OWNDC;
-	wndclass.cbClsExtra = 0;
+	// WNDCEX initialization (Window Class Extended)
+	wndclass.cbSize = sizeof(WNDCLASSEX); // cbSize - Count Of Byte-size                                      
+	wndclass.style = CS_HREDRAW | CS_VREDRAW | CS_OWNDC; // CS_HREDRAW - Class Style (Horizontal Re-Draw), CS_VREDRAW - (Vertical Re-Draw) // window should be drawn(modified) vertically and horizontally, CS | OWNDC = ClassStyle |Class Ownership(paint Specialist)
+	wndclass.cbClsExtra = 0;  //c
 	wndclass.cbWndExtra = 0;
-	wndclass.lpfnWndProc = WndProc;
-	wndclass.hInstance = hInstance;
-	wndclass.hbrBackground = (HBRUSH)GetStockObject(BLACK_BRUSH);
-	wndclass.hIcon = LoadIcon(hInstance, MAKEINTRESOURCE(MYICON));
-	wndclass.hCursor = LoadCursor(NULL, IDC_ARROW);
-	wndclass.lpszClassName = szAppName;
-	wndclass.lpszMenuName = NULL;
-	wndclass.hIconSm = LoadIcon(hInstance, MAKEINTRESOURCE(MYICON));
+	wndclass.lpfnWndProc = WndProc; // lpfnWndProc - Long Pointer To Function - Window-Procedure
+	wndclass.hInstance = hInstance;  //Handle To Instance, (Camel Notation Used)
+	wndclass.hbrBackground = (HBRUSH)GetStockObject(BLACK_BRUSH); // hbrBackground - (handleTobrush) Background, BLACK_BRUSH = macro For Getting Brush Having Black Color
+	wndclass.hIcon = LoadIcon(hInstance, MAKEINTRESOURCE(MYICON)); // hIcon - handle To Icon, Icon is an - 'RESOURCE', ('NULL' Parameter because we have no icon and have to get one), ID - Identifier I - (Application) - Icon ,  
+	wndclass.hCursor = LoadCursor(NULL, IDC_ARROW);  // NULL Parameter because we don't have a cursor, hCursor(Handle To Cursor)  
+	wndclass.lpszClassName = szAppName;  // long-pointer to zero(NULL) terminated ('\0') Class Name
+	wndclass.lpszMenuName = NULL;      //Menu name - NULL (We Don't Have A Menu)
+	wndclass.hIconSm = LoadIcon(hInstance, MAKEINTRESOURCE(MYICON)); 
 
 	// Register WNDCLASSEX
-	RegisterClassEx(&wndclass);
+	RegisterClassEx(&wndclass); //Registered Extended Class
 
 	// Create Window
-	hwnd = CreateWindow(szAppName,
-		TEXT("Vishwa Khude"),
-		WS_OVERLAPPEDWINDOW | WS_CLIPCHILDREN | WS_CLIPSIBLINGS | WS_VISIBLE,
-		X,
-		Y,
+	hwnd = CreateWindowEx(WS_EX_APPWINDOW, szAppName, // string to NULL terminated app name('\0'), //Creates window in memory, WS_EX_APPWINDOW -  
+		TEXT("Vishwa Khude"), // TEXT(macro) UNICODE
+		WS_OVERLAPPEDWINDOW | WS_CLIPCHILDREN | WS_CLIPSIBLINGS | WS_VISIBLE,  // (Window Style - OVERLAPPED(appearing above every application), WS_CLIPCHILDREN - area Clipped / Covered By Child Window is Excluded By Parent Window, WS_CLIPSIBLINGS - Exclude Clipping/Covering By SiblingWindow, WS_VISIBLE - PArent Window Should Be Visible 
+		ScreenWidth / 2 - WIN_WIDTH / 2,
+		ScreenHeight / 2 - WIN_HEIGHT / 2,
 		WIN_WIDTH,
 		WIN_HEIGHT,
-		NULL,
-		NULL,
-		hInstance,
-		NULL);
-
+		NULL,    // Desktop Window(Defalut Handle), HWND_DESKTOP, (Parent Window Handle)      
+		NULL,    // NULL Parameter for 'Menu'
+		hInstance,    // Instance for Creating Handle For Window(OS)
+		NULL);   // used as an vessel (lpvoid(long parameter to void) - void*)
+	
 	ghwnd = hwnd;
 
-	// Initialization
-	iResult = initialize();
+	// initialization
+	iResult = initialize_cube();
 	if (iResult != 0)
 	{
-		MessageBox(hwnd, TEXT("initialize() failed"), TEXT("Error"), MB_OK | MB_ICONERROR);
+		MessageBox(hwnd, TEXT("initialize() Failed"), TEXT("Error"), MB_OK | MB_ICONERROR);
 		DestroyWindow(hwnd);
 	}
-
+		
 	// Show The Window
-	ShowWindow(hwnd, iCmdShow);
-	SetForegroundWindow(hwnd);
-	SetFocus(hwnd);
+	ShowWindow(hwnd, iCmdShow);  // ShowWindow - Displaying Our Window, By Using (handle to window (hwnd)), 
 
-	// Paint/Re-Draw The Window
-	UpdateWindow(hwnd);
-
-	// Message-loop
-	// game-loop
-	while (bDone == FALSE)
+	SetForegroundWindow(hwnd); // Set Window On The Fore-ground(Front Order(Z-order))
+	SetFocus(hwnd); // Keep My Window Highlited/Focused
+		
+	// Game-loop
+	while (bdone == FALSE)
 	{
 		if (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE))
 		{
 			if (msg.message == WM_QUIT)
-				bDone = TRUE;
+				bdone = TRUE;
 			else
 			{
 				TranslateMessage(&msg);
@@ -217,51 +231,63 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmdLi
 		}
 		else
 		{
-			if (gbActiveWindow == TRUE)
+			if (gbActive == TRUE)
 			{
-				// RENDER
-				display();
+				// Render
+				display_cube();
 
-				// UPDATE
-				update();
+				// Update
+				update_cube();
 			}
 		}
 	}
-	uninitialize();
 
-	return ((int)msg.wParam);
+	// Uninitialization
+	uninitialize_cube();
+
+	return((int)msg.wParam);
 }
 
 // CallBack Function
-LRESULT CALLBACK WndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lParam)
+LRESULT CALLBACK WndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lParam) // UINT- Unsigned INTeger iMsg(integer Message) 
 {
-	// Function Declarations
+	//Function Declarations
 	void ToggleFullScreen(void);
-	void resize(int, int);
+	void resize_cube(int, int);
 
 	// code
-	switch (iMsg)
+	switch (iMsg)  // Destroying The Window
 	{
 	case WM_SETFOCUS:
-		gbActiveWindow = TRUE;
+		gbActive = TRUE;
 		break;
 
 	case WM_KILLFOCUS:
-		gbActiveWindow = FALSE;
+		gbActive = FALSE;
 		break;
 
-	case WM_SIZE:
-		resize(LOWORD(lParam), HIWORD(lParam));
+	case WM_SIZE:     // *** lParam(WM_SIZE) gives - Width & Height ***
+		resize_cube(LOWORD(lParam), HIWORD(lParam));
 		break;
 
-	case WM_ERASEBKGND:
-		return (0);
-		break;
+	case WM_ERASEBKGND: // WM_ERASEBKGND - wParam EraseBackGround(Erase The BackGround Of My Window)
+		return(0);  
 
 	case WM_KEYDOWN:
 		switch (LOWORD(wParam))
 		{
 		case VK_ESCAPE:
+
+
+		}
+		break;
+
+	case WM_CHAR:
+		switch (LOWORD(wParam))
+		{
+
+		case 'S':
+		case 's':
 			if (gbFullscreen == FALSE)
 			{
 				ToggleFullScreen();
@@ -272,45 +298,39 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lParam)
 				ToggleFullScreen();
 				gbFullscreen = FALSE;
 			}
-
 			break;
-		}
-		break;
 
-	case WM_CHAR:
-		switch (LOWORD(wParam))
-		{
 		case 'V':
 		case 'v':
 			if (bLightingEnabled == TRUE)
 			{
 				chosenShader = 'v';
 
-				modelMatrixUniform = glGetUniformLocation(pervertex_shaderProgramObject, "uModelMatrix");
-				modelViewMatrixUniform = glGetUniformLocation(pervertex_shaderProgramObject, "uViewMatrix");
-				projectionMatrixUniform = glGetUniformLocation(pervertex_shaderProgramObject, "uProjectionMatrix");
+				modelMatrixUniform = glGetUniformLocation(pervertex_shaderProgramObject_sphere, "uModelMatrix");
+				modelViewMatrixUniform = glGetUniformLocation(pervertex_shaderProgramObject_sphere, "uViewMatrix");
+				projectionMatrixUniform = glGetUniformLocation(pervertex_shaderProgramObject_sphere, "uProjectionMatrix");
 
-				lightAmbientUniform[0] = glGetUniformLocation(pervertex_shaderProgramObject, "uLightAmbient[0]");
-				lightDiffuseUniform[0] = glGetUniformLocation(pervertex_shaderProgramObject, "uLightDiffuse[0]");
-				lightSpecularUniform[0] = glGetUniformLocation(pervertex_shaderProgramObject, "uLightSpecular[0]");
-				lightPositionUniform[0] = glGetUniformLocation(pervertex_shaderProgramObject, "uLightPosition[0]");
+				lightAmbientUniform[0] = glGetUniformLocation(pervertex_shaderProgramObject_sphere, "uLightAmbient[0]");
+				lightDiffuseUniform[0] = glGetUniformLocation(pervertex_shaderProgramObject_sphere, "uLightDiffuse[0]");
+				lightSpecularUniform[0] = glGetUniformLocation(pervertex_shaderProgramObject_sphere, "uLightSpecular[0]");
+				lightPositionUniform[0] = glGetUniformLocation(pervertex_shaderProgramObject_sphere, "uLightPosition[0]");
 
-				lightAmbientUniform[1] = glGetUniformLocation(pervertex_shaderProgramObject, "uLightAmbient[1]");
-				lightDiffuseUniform[1] = glGetUniformLocation(pervertex_shaderProgramObject, "uLightDiffuse[1]");
-				lightSpecularUniform[1] = glGetUniformLocation(pervertex_shaderProgramObject, "uLightSpecular[1]");
-				lightPositionUniform[1] = glGetUniformLocation(pervertex_shaderProgramObject, "uLightPosition[1]");
+				lightAmbientUniform[1] = glGetUniformLocation(pervertex_shaderProgramObject_sphere, "uLightAmbient[1]");
+				lightDiffuseUniform[1] = glGetUniformLocation(pervertex_shaderProgramObject_sphere, "uLightDiffuse[1]");
+				lightSpecularUniform[1] = glGetUniformLocation(pervertex_shaderProgramObject_sphere, "uLightSpecular[1]");
+				lightPositionUniform[1] = glGetUniformLocation(pervertex_shaderProgramObject_sphere, "uLightPosition[1]");
 
-				lightAmbientUniform[2] = glGetUniformLocation(pervertex_shaderProgramObject, "uLightAmbient[2]");
-				lightDiffuseUniform[2] = glGetUniformLocation(pervertex_shaderProgramObject, "uLightDiffuse[2]");
-				lightSpecularUniform[2] = glGetUniformLocation(pervertex_shaderProgramObject, "uLightSpecular[2]");
-				lightPositionUniform[2] = glGetUniformLocation(pervertex_shaderProgramObject, "uLightPosition[2]");
+				lightAmbientUniform[2] = glGetUniformLocation(pervertex_shaderProgramObject_sphere, "uLightAmbient[2]");
+				lightDiffuseUniform[2] = glGetUniformLocation(pervertex_shaderProgramObject_sphere, "uLightDiffuse[2]");
+				lightSpecularUniform[2] = glGetUniformLocation(pervertex_shaderProgramObject_sphere, "uLightSpecular[2]");
+				lightPositionUniform[2] = glGetUniformLocation(pervertex_shaderProgramObject_sphere, "uLightPosition[2]");
 
-				materialAmbientUniform = glGetUniformLocation(pervertex_shaderProgramObject, "uMaterialAmbient");
-				materialDiffuseUniform = glGetUniformLocation(pervertex_shaderProgramObject, "uMaterialDiffuse");
-				materialSpecularUniform = glGetUniformLocation(pervertex_shaderProgramObject, "uMaterialSpecular");
-				materialShininessUniform = glGetUniformLocation(pervertex_shaderProgramObject, "uMaterialShininess");
+				materialAmbientUniform = glGetUniformLocation(pervertex_shaderProgramObject_sphere, "uMaterialAmbient");
+				materialDiffuseUniform = glGetUniformLocation(pervertex_shaderProgramObject_sphere, "uMaterialDiffuse");
+				materialSpecularUniform = glGetUniformLocation(pervertex_shaderProgramObject_sphere, "uMaterialSpecular");
+				materialShininessUniform = glGetUniformLocation(pervertex_shaderProgramObject_sphere, "uMaterialShininess");
 
-				keyPressUniform = glGetUniformLocation(pervertex_shaderProgramObject, "uKeyPress");
+				keyPressUniform = glGetUniformLocation(pervertex_shaderProgramObject_sphere, "uKeyPress");
 			}
 			break;
 
@@ -320,31 +340,31 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lParam)
 			{
 				chosenShader = 'f';
 
-				modelMatrixUniform = glGetUniformLocation(perfragment_shaderProgramObject, "uModelMatrix");
-				modelViewMatrixUniform = glGetUniformLocation(perfragment_shaderProgramObject, "uViewMatrix");
-				projectionMatrixUniform = glGetUniformLocation(perfragment_shaderProgramObject, "uProjectionMatrix");
+				modelMatrixUniform = glGetUniformLocation(perfragment_shaderProgramObject_sphere, "uModelMatrix");
+				modelViewMatrixUniform = glGetUniformLocation(perfragment_shaderProgramObject_sphere, "uViewMatrix");
+				projectionMatrixUniform = glGetUniformLocation(perfragment_shaderProgramObject_sphere, "uProjectionMatrix");
 
-				lightAmbientUniform[0] = glGetUniformLocation(perfragment_shaderProgramObject, "uLightAmbient[0]");
-				lightDiffuseUniform[0] = glGetUniformLocation(perfragment_shaderProgramObject, "uLightDiffuse[0]");
-				lightSpecularUniform[0] = glGetUniformLocation(perfragment_shaderProgramObject, "uLightSpecular[0]");
-				lightPositionUniform[0] = glGetUniformLocation(perfragment_shaderProgramObject, "uLightPosition[0]");
+				lightAmbientUniform[0] = glGetUniformLocation(perfragment_shaderProgramObject_sphere, "uLightAmbient[0]");
+				lightDiffuseUniform[0] = glGetUniformLocation(perfragment_shaderProgramObject_sphere, "uLightDiffuse[0]");
+				lightSpecularUniform[0] = glGetUniformLocation(perfragment_shaderProgramObject_sphere, "uLightSpecular[0]");
+				lightPositionUniform[0] = glGetUniformLocation(perfragment_shaderProgramObject_sphere, "uLightPosition[0]");
 
-				lightAmbientUniform[1] = glGetUniformLocation(perfragment_shaderProgramObject, "uLightAmbient[1]");
-				lightDiffuseUniform[1] = glGetUniformLocation(perfragment_shaderProgramObject, "uLightDiffuse[1]");
-				lightSpecularUniform[1] = glGetUniformLocation(perfragment_shaderProgramObject, "uLightSpecular[1]");
-				lightPositionUniform[1] = glGetUniformLocation(perfragment_shaderProgramObject, "uLightPosition[1]");
+				lightAmbientUniform[1] = glGetUniformLocation(perfragment_shaderProgramObject_sphere, "uLightAmbient[1]");
+				lightDiffuseUniform[1] = glGetUniformLocation(perfragment_shaderProgramObject_sphere, "uLightDiffuse[1]");
+				lightSpecularUniform[1] = glGetUniformLocation(perfragment_shaderProgramObject_sphere, "uLightSpecular[1]");
+				lightPositionUniform[1] = glGetUniformLocation(perfragment_shaderProgramObject_sphere, "uLightPosition[1]");
 
-				lightAmbientUniform[2] = glGetUniformLocation(perfragment_shaderProgramObject, "uLightAmbient[2]");
-				lightDiffuseUniform[2] = glGetUniformLocation(perfragment_shaderProgramObject, "uLightDiffuse[2]");
-				lightSpecularUniform[2] = glGetUniformLocation(perfragment_shaderProgramObject, "uLightSpecular[2]");
-				lightPositionUniform[2] = glGetUniformLocation(perfragment_shaderProgramObject, "uLightPosition[2]");
+				lightAmbientUniform[2] = glGetUniformLocation(perfragment_shaderProgramObject_sphere, "uLightAmbient[2]");
+				lightDiffuseUniform[2] = glGetUniformLocation(perfragment_shaderProgramObject_sphere, "uLightDiffuse[2]");
+				lightSpecularUniform[2] = glGetUniformLocation(perfragment_shaderProgramObject_sphere, "uLightSpecular[2]");
+				lightPositionUniform[2] = glGetUniformLocation(perfragment_shaderProgramObject_sphere, "uLightPosition[2]");
 
-				materialAmbientUniform = glGetUniformLocation(perfragment_shaderProgramObject, "uMaterialAmbient");
-				materialDiffuseUniform = glGetUniformLocation(perfragment_shaderProgramObject, "uMaterialDiffuse");
-				materialSpecularUniform = glGetUniformLocation(perfragment_shaderProgramObject, "uMaterialSpecular");
-				materialShininessUniform = glGetUniformLocation(perfragment_shaderProgramObject, "uMaterialShininess");
+				materialAmbientUniform = glGetUniformLocation(perfragment_shaderProgramObject_sphere, "uMaterialAmbient");
+				materialDiffuseUniform = glGetUniformLocation(perfragment_shaderProgramObject_sphere, "uMaterialDiffuse");
+				materialSpecularUniform = glGetUniformLocation(perfragment_shaderProgramObject_sphere, "uMaterialSpecular");
+				materialShininessUniform = glGetUniformLocation(perfragment_shaderProgramObject_sphere, "uMaterialShininess");
 
-				keyPressUniform = glGetUniformLocation(perfragment_shaderProgramObject, "uKeyPress");
+				keyPressUniform = glGetUniformLocation(perfragment_shaderProgramObject_sphere, "uKeyPress");
 			}
 
 			break;
@@ -369,24 +389,25 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lParam)
 		break;
 
 	case WM_CLOSE:
+	{
 		DestroyWindow(hwnd);
-		break;
-
-	case WM_DESTROY:
-		if (gpFILE)
-		{
-			fprintf(gpFILE, "Program Ended Successfully...\n");
-			fclose(gpFILE);
-			gpFILE = NULL;
-		}
-
-		PostQuitMessage(0);
-		break;
-	default:
 		break;
 	}
 
-	return (DefWindowProc(hwnd, iMsg, wParam, lParam));
+	case WM_DESTROY :  // GetMessage- False
+		if (gpfile)
+		{
+			fprintf(gpfile, "Program Ended Successfully\n");
+			fclose(gpfile);
+			gpfile = NULL;
+		}
+		PostQuitMessage(0);
+		break;
+	default :
+		break;
+	}
+
+	return(DefWindowProc(hwnd, iMsg, wParam, lParam)); // Default Window Procedure For returning the messages which are not be used in the program
 }
 
 void ToggleFullScreen(void)
@@ -397,13 +418,13 @@ void ToggleFullScreen(void)
 	// Code
 	if (gbFullscreen == FALSE)
 	{
-		dwStyle = GetWindowLong(ghwnd, GWL_STYLE);
+		dwStyle = GetWindowLong(ghwnd, GWL_STYLE); // Win32 API(dwStyle)
 
 		if (dwStyle & WS_OVERLAPPEDWINDOW)
 		{
 			if (GetWindowPlacement(ghwnd, &wpPrev) && GetMonitorInfo(MonitorFromWindow(ghwnd, MONITORINFOF_PRIMARY), &mi))
 			{
-				SetWindowLong(ghwnd, GWL_STYLE, dwStyle & ~WS_OVERLAPPEDWINDOW); // ~Remove Contents
+				SetWindowLong(ghwnd, GWL_STYLE, dwStyle & ~WS_OVERLAPPEDWINDOW);  // ~(To Remove Contents)
 				SetWindowPos(ghwnd, HWND_TOP, mi.rcMonitor.left, mi.rcMonitor.top, mi.rcMonitor.right - mi.rcMonitor.left, mi.rcMonitor.bottom - mi.rcMonitor.top, SWP_NOZORDER | SWP_FRAMECHANGED);
 			}
 		}
@@ -421,12 +442,302 @@ void ToggleFullScreen(void)
 	}
 }
 
-int initialize(void)
+int initialize_cube(void)
+{
+	
+	void resize_cube(int, int);
+
+	BOOL bResult;
+
+	// function declarations
+	void uninitialize_cube(void);
+	void printGLInfo(void);
+
+	BOOL createFBO(GLint, GLint);
+		
+	// Vertex Shader 
+	const GLchar* vertexShaderSourceCode =
+		"#version 460 core" \
+		"\n" \
+		"in vec4 aPosition;" \
+		"in vec2 aTexCoord;" \
+		"uniform mat4 uMVPMatrix;" \
+		"out vec2 oTexCoord;" \
+		"void main(void)" \
+		"{" \
+		"gl_Position = aPosition;" \
+		"oTexCoord = aTexCoord;" \
+		"gl_Position = uMVPMatrix*aPosition;" \
+		"}";
+
+	GLuint vertexShaderObject = glCreateShader(GL_VERTEX_SHADER);
+	
+	glShaderSource(vertexShaderObject, 1, (const GLchar**)& vertexShaderSourceCode, NULL);
+	
+	glCompileShader(vertexShaderObject);
+
+	// 
+	GLint status = 0;
+	GLint infoLogLength = 0;
+	GLchar* szInfoLog = NULL;
+
+	glGetShaderiv(vertexShaderObject, GL_COMPILE_STATUS, &status);
+	if (status == GL_FALSE)
+	{
+		glGetShaderiv(vertexShaderObject, GL_INFO_LOG_LENGTH, &infoLogLength);
+
+		szInfoLog = (GLchar*)malloc(infoLogLength);
+		if (infoLogLength > 0)
+		{
+			szInfoLog = (GLchar*)malloc(infoLogLength);
+
+			if (szInfoLog != NULL)
+			{
+				glGetShaderInfoLog(vertexShaderObject, GL_INFO_LOG_LENGTH, NULL, szInfoLog);
+				fprintf(gpfile, "vertex shader compilation error log - %s\n", szInfoLog);
+
+				free(szInfoLog);
+				szInfoLog = NULL;
+				
+			}
+		}
+		uninitialize_cube();
+	}
+	
+	//Fragment Shader 
+	const GLchar* fragmentShaderSourceCode =
+		"#version 460 core" \
+		"\n" \
+		"in vec2 oTexCoord;" \
+		"uniform sampler2D uTextureSampler;" \
+		"out vec4 FragColor;" \
+		"void main(void)" \
+		"{" \
+		"FragColor = texture(uTextureSampler, oTexCoord);" \
+		"}";
+	
+	GLuint fragmentShaderObject = glCreateShader(GL_FRAGMENT_SHADER);
+
+	glShaderSource(fragmentShaderObject, 1, (const GLchar**)&fragmentShaderSourceCode, NULL);
+
+	glCompileShader(fragmentShaderObject);
+
+	status = 0;
+	infoLogLength = 0;
+	szInfoLog = NULL;
+
+	glGetShaderiv(fragmentShaderObject, GL_COMPILE_STATUS, &status);
+	if (status == GL_FALSE)
+	{
+		glGetShaderiv(fragmentShaderObject, GL_INFO_LOG_LENGTH, &infoLogLength);
+		
+		if (infoLogLength > 0)
+		{
+			szInfoLog = (GLchar*)malloc(infoLogLength);
+
+			if (szInfoLog != NULL)
+			{
+				glGetShaderInfoLog(fragmentShaderObject, GL_INFO_LOG_LENGTH, NULL, szInfoLog);
+				fprintf(gpfile, "fragment shader compilation error log : %s \n", szInfoLog);
+				free(szInfoLog);
+				szInfoLog = NULL;
+				
+			}
+		}
+
+		uninitialize_cube();
+	}
+
+	// shader Program
+	shaderProgramObject_cube = glCreateProgram();
+
+	glAttachShader(shaderProgramObject_cube, vertexShaderObject);
+	glAttachShader(shaderProgramObject_cube, fragmentShaderObject);
+
+	glBindAttribLocation(shaderProgramObject_cube, AMC_ATTRIBUTE_POSITION, "aPosition");
+	glBindAttribLocation(shaderProgramObject_cube, AMC_ATTRIBUTE_TEXCOORD, "aTexCoord");
+
+	glLinkProgram(shaderProgramObject_cube);
+
+	status = 0;
+	infoLogLength = 0;
+	szInfoLog = NULL;
+
+	glGetProgramiv(shaderProgramObject_cube, GL_LINK_STATUS, &status);
+	if (status == GL_FALSE)
+	{
+		glGetProgramiv(shaderProgramObject_cube, GL_INFO_LOG_LENGTH, &infoLogLength);
+		if (infoLogLength > 0)
+		{
+			szInfoLog = (GLchar*)malloc(infoLogLength);
+			if (szInfoLog != NULL)
+			{
+				glGetProgramInfoLog(shaderProgramObject_cube, infoLogLength, NULL, szInfoLog);
+				fprintf(gpfile, "shader program linking error log - %s \n", szInfoLog);
+				free(szInfoLog);
+				szInfoLog = NULL;
+			}
+		}
+		uninitialize_cube();
+	}
+
+	// Get shader Uniform locations
+	mvpMatrixUniform_cube = glGetUniformLocation(shaderProgramObject_cube, "uMVPMatrix");
+	textureSamplerUniform_cube = glGetUniformLocation(shaderProgramObject_cube, "uTextureSampler");
+
+	const GLfloat cube_position[] =
+	{
+		// top
+		1.0f, 1.0f, -1.0f,
+	   -1.0f, 1.0f, -1.0f,
+	   -1.0f, 1.0f, 1.0f,
+	    1.0f, 1.0f, 1.0f,
+
+	   // bottom
+	   1.0f, -1.0f, -1.0f,
+	   -1.0f, -1.0f, -1.0f,
+	   -1.0f, -1.0f,  1.0f,
+	   1.0f, -1.0f,  1.0f,
+
+	   // front
+	   1.0f, 1.0f, 1.0f,
+	   -1.0f, 1.0f, 1.0f,
+	   -1.0f, -1.0f, 1.0f,
+	   1.0f, -1.0f, 1.0f,
+
+	   // back
+	   1.0f, 1.0f, -1.0f,
+	   -1.0f, 1.0f, -1.0f,
+	   -1.0f, -1.0f, -1.0f,
+	   1.0f, -1.0f, -1.0f,
+
+	   // right
+	   1.0f, 1.0f, -1.0f,
+	   1.0f, 1.0f, 1.0f,
+	   1.0f, -1.0f, 1.0f,
+	   1.0f, -1.0f, -1.0f,
+
+	   // left
+	   -1.0f, 1.0f, 1.0f,
+	   -1.0f, 1.0f, -1.0f,
+	   -1.0f, -1.0f, -1.0f,
+	   -1.0f, -1.0f, 1.0f,
+	};
+
+	
+	GLfloat cube_texcoords[] =
+	{
+	    0.0f, 0.0f,
+		1.0f, 0.0f,
+		1.0f, 1.0f,
+		0.0f, 1.0f,
+
+		0.0f, 0.0f,
+		1.0f, 0.0f,
+		1.0f, 1.0f,
+		0.0f, 1.0f,
+
+		0.0f, 0.0f,
+		1.0f, 0.0f,
+		1.0f, 1.0f,
+		0.0f, 1.0f,
+
+		0.0f, 0.0f,
+		1.0f, 0.0f,
+		1.0f, 1.0f,
+		0.0f, 1.0f,
+
+		0.0f, 0.0f,
+		1.0f, 0.0f,
+		1.0f, 1.0f,
+		0.0f, 1.0f,
+
+		0.0f, 0.0f,
+		1.0f, 0.0f,
+		1.0f, 1.0f,
+		0.0f, 1.0f,
+	};
+
+	//CUBE
+	//VAO
+	glGenVertexArrays(1, &vao_cube);
+	glBindVertexArray(vao_cube);
+
+	//VBO for Texcoords
+	glGenBuffers(1, &vbo_texcoord_cube);
+	glBindBuffer(GL_ARRAY_BUFFER, vbo_texcoord_cube);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(cube_texcoords), cube_texcoords, GL_STATIC_DRAW);
+	glVertexAttribPointer(AMC_ATTRIBUTE_TEXCOORD, 2, GL_FLOAT, GL_FALSE, 0, NULL);
+	glEnableVertexAttribArray(AMC_ATTRIBUTE_TEXCOORD);
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+
+	//VBO for position
+	glGenBuffers(1, &vbo_position_cube);
+	glBindBuffer(GL_ARRAY_BUFFER, vbo_position_cube);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(cube_position), cube_position, GL_STATIC_DRAW);
+	glVertexAttribPointer(AMC_ATTRIBUTE_POSITION, 3, GL_FLOAT, GL_FALSE, 0, NULL);
+	glEnableVertexAttribArray(AMC_ATTRIBUTE_POSITION);
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+		
+	//for Color
+	glVertexAttrib3f(AMC_ATTRIBUTE_COLOR, 1.0f, 1.0f, 1.0f);
+
+	glBindVertexArray(0);
+
+	//Enabling Depth...
+	glClearDepth(1.0f);
+	glEnable(GL_DEPTH_TEST);
+	glDepthFunc(GL_LEQUAL);
+	
+	// Set The Clearcolor of window to blue
+	glClearColor(1.0f, 1.0f, 1.0f, 1.0f); // alpha(transperancy, opaqueness)
+
+	//Tell OpenGl To Enable the Texture
+	glEnable(GL_TEXTURE_2D);
+
+	//perspective projection 
+	perspectiveProjectionMatrix_cube = vmath::mat4::identity();
+
+	resize_cube(WIN_WIDTH, WIN_HEIGHT);
+		
+	return(0);
+	
+}
+
+void printGLInfo(void)
+{
+	// variable declarations
+	GLint numExtensions;
+	GLint i;
+
+	// code
+	fprintf(gpfile, "OpenGL Vendor : %s \n", glGetString(GL_VENDOR));
+	fprintf(gpfile, "OpenGL Renderer : %s \n", glGetString(GL_RENDERER));
+	fprintf(gpfile, "OpenGL Version : %s \n", glGetString(GL_VERSION));
+	fprintf(gpfile, "OpenGL GLSL Version : %s \n", glGetString(GL_SHADING_LANGUAGE_VERSION));
+
+	fprintf(gpfile, "***********************************************\n\n");
+
+	// Listing of supported extensions
+	glGetIntegerv(GL_NUM_EXTENSIONS, &numExtensions);
+
+	for (i = 0; i < numExtensions; i++)
+	{
+		fprintf(gpfile, "%s \n", glGetStringi(GL_EXTENSIONS, i));
+	}
+
+	fprintf(gpfile, "***********************************************\n\n");
+
+}
+
+
+BOOL initialize_sphere(GLint textureWidth, GLint textureHeight)
 {
 	// function declarations
 	void printgGLInfo(void);
-	void resize(int, int);
-	void uninitialize(void);
+	void resize_sphere(int, int);
+	void uninitialize_sphere(void);
+		
 
 	// code
 	// variable declaration
@@ -493,9 +804,6 @@ int initialize(void)
 		fprintf(gpFILE, "glewInit() failed\n");
 		return (-6);
 	}
-
-	// printglinfo
-	printgGLInfo();
 
 	/////////---------------------------------------------pervertex-----------------------------------------------//////////
 
@@ -572,7 +880,7 @@ int initialize(void)
 				szinfolog = NULL;
 			}
 		}
-		uninitialize();
+		uninitialize_sphere();
 	}
 
 	// fragment shader
@@ -617,71 +925,71 @@ int initialize(void)
 				szinfolog = NULL;
 			}
 		}
-		uninitialize();
+		uninitialize_sphere();
 	}
 
 	// shader program
-	pervertex_shaderProgramObject = glCreateProgram();
+	pervertex_shaderProgramObject_sphere = glCreateProgram();
 
-	glAttachShader(pervertex_shaderProgramObject, pervertex_vertexShaderObject);
-	glAttachShader(pervertex_shaderProgramObject, pervertex_fragmentShaderObject);
+	glAttachShader(pervertex_shaderProgramObject_sphere, pervertex_vertexShaderObject);
+	glAttachShader(pervertex_shaderProgramObject_sphere, pervertex_fragmentShaderObject);
 
 	// prelinking
-	glBindAttribLocation(pervertex_shaderProgramObject, AMC_ATTRIBUTE_POSITION, "aPosition");
-	glBindAttribLocation(pervertex_shaderProgramObject, AMC_ATTRIBUTE_NORMAL, "aNormal");
+	glBindAttribLocation(pervertex_shaderProgramObject_sphere, AMC_ATTRIBUTE_POSITION, "aPosition");
+	glBindAttribLocation(pervertex_shaderProgramObject_sphere, AMC_ATTRIBUTE_NORMAL, "aNormal");
 
-	glLinkProgram(pervertex_shaderProgramObject);
+	glLinkProgram(pervertex_shaderProgramObject_sphere);
 
 	status = 0;
 	infoLogLength = 0;
 	szinfolog = NULL;
 
-	glGetProgramiv(pervertex_shaderProgramObject, GL_LINK_STATUS, &status);
+	glGetProgramiv(pervertex_shaderProgramObject_sphere, GL_LINK_STATUS, &status);
 	if (status == GL_FALSE)
 	{
-		glGetProgramiv(pervertex_shaderProgramObject, GL_INFO_LOG_LENGTH, &infoLogLength);
+		glGetProgramiv(pervertex_shaderProgramObject_sphere, GL_INFO_LOG_LENGTH, &infoLogLength);
 		if (infoLogLength > 0)
 		{
 			szinfolog = (GLchar*)malloc(infoLogLength);
 			if (szinfolog != NULL)
 			{
-				glGetProgramInfoLog(pervertex_shaderProgramObject, infoLogLength, NULL, szinfolog);
+				glGetProgramInfoLog(pervertex_shaderProgramObject_sphere, infoLogLength, NULL, szinfolog);
 				fprintf(gpFILE, "Shader Program linking error log: %s\n", szinfolog);
 				free(szinfolog);
 				szinfolog = NULL;
 			}
 		}
-		uninitialize();
+		uninitialize_sphere();
 	}
 
-	modelMatrixUniform = glGetUniformLocation(pervertex_shaderProgramObject, "uModelMatrix");
-	modelViewMatrixUniform = glGetUniformLocation(pervertex_shaderProgramObject, "uViewMatrix");
-	projectionMatrixUniform = glGetUniformLocation(pervertex_shaderProgramObject, "uProjectionMatrix");
+	modelMatrixUniform = glGetUniformLocation(pervertex_shaderProgramObject_sphere, "uModelMatrix");
+	modelViewMatrixUniform = glGetUniformLocation(pervertex_shaderProgramObject_sphere, "uViewMatrix");
+	projectionMatrixUniform = glGetUniformLocation(pervertex_shaderProgramObject_sphere, "uProjectionMatrix");
 
-	lightAmbientUniform[0] = glGetUniformLocation(pervertex_shaderProgramObject, "uLightAmbient[0]");
-	lightDiffuseUniform[0] = glGetUniformLocation(pervertex_shaderProgramObject, "uLightDiffuse[0]");
-	lightSpecularUniform[0] = glGetUniformLocation(pervertex_shaderProgramObject, "uLightSpecular[0]");
-	lightPositionUniform[0] = glGetUniformLocation(pervertex_shaderProgramObject, "uLightPosition[0]");
+	lightAmbientUniform[0] = glGetUniformLocation(pervertex_shaderProgramObject_sphere, "uLightAmbient[0]");
+	lightDiffuseUniform[0] = glGetUniformLocation(pervertex_shaderProgramObject_sphere, "uLightDiffuse[0]");
+	lightSpecularUniform[0] = glGetUniformLocation(pervertex_shaderProgramObject_sphere, "uLightSpecular[0]");
+	lightPositionUniform[0] = glGetUniformLocation(pervertex_shaderProgramObject_sphere, "uLightPosition[0]");
 
-	lightAmbientUniform[1] = glGetUniformLocation(pervertex_shaderProgramObject, "uLightAmbient[1]");
-	lightDiffuseUniform[1] = glGetUniformLocation(pervertex_shaderProgramObject, "uLightDiffuse[1]");
-	lightSpecularUniform[1] = glGetUniformLocation(pervertex_shaderProgramObject, "uLightSpecular[1]");
-	lightPositionUniform[1] = glGetUniformLocation(pervertex_shaderProgramObject, "uLightPosition[1]");
+	lightAmbientUniform[1] = glGetUniformLocation(pervertex_shaderProgramObject_sphere, "uLightAmbient[1]");
+	lightDiffuseUniform[1] = glGetUniformLocation(pervertex_shaderProgramObject_sphere, "uLightDiffuse[1]");
+	lightSpecularUniform[1] = glGetUniformLocation(pervertex_shaderProgramObject_sphere, "uLightSpecular[1]");
+	lightPositionUniform[1] = glGetUniformLocation(pervertex_shaderProgramObject_sphere, "uLightPosition[1]");
 
-	lightAmbientUniform[2] = glGetUniformLocation(pervertex_shaderProgramObject, "uLightAmbient[2]");
-	lightDiffuseUniform[2] = glGetUniformLocation(pervertex_shaderProgramObject, "uLightDiffuse[2]");
-	lightSpecularUniform[2] = glGetUniformLocation(pervertex_shaderProgramObject, "uLightSpecular[2]");
-	lightPositionUniform[2] = glGetUniformLocation(pervertex_shaderProgramObject, "uLightPosition[2]");
+	lightAmbientUniform[2] = glGetUniformLocation(pervertex_shaderProgramObject_sphere, "uLightAmbient[2]");
+	lightDiffuseUniform[2] = glGetUniformLocation(pervertex_shaderProgramObject_sphere, "uLightDiffuse[2]");
+	lightSpecularUniform[2] = glGetUniformLocation(pervertex_shaderProgramObject_sphere, "uLightSpecular[2]");
+	lightPositionUniform[2] = glGetUniformLocation(pervertex_shaderProgramObject_sphere, "uLightPosition[2]");
 
-	materialAmbientUniform = glGetUniformLocation(pervertex_shaderProgramObject, "uMaterialAmbient");
-	materialDiffuseUniform = glGetUniformLocation(pervertex_shaderProgramObject, "uMaterialDiffuse");
-	materialSpecularUniform = glGetUniformLocation(pervertex_shaderProgramObject, "uMaterialSpecular");
-	materialShininessUniform = glGetUniformLocation(pervertex_shaderProgramObject, "uMaterialShininess");
+	materialAmbientUniform = glGetUniformLocation(pervertex_shaderProgramObject_sphere, "uMaterialAmbient");
+	materialDiffuseUniform = glGetUniformLocation(pervertex_shaderProgramObject_sphere, "uMaterialDiffuse");
+	materialSpecularUniform = glGetUniformLocation(pervertex_shaderProgramObject_sphere, "uMaterialSpecular");
+	materialShininessUniform = glGetUniformLocation(pervertex_shaderProgramObject_sphere, "uMaterialShininess");
 
-	keyPressUniform = glGetUniformLocation(pervertex_shaderProgramObject, "uKeyPress");
+	keyPressUniform = glGetUniformLocation(pervertex_shaderProgramObject_sphere, "uKeyPress");
 
-	
-		// Vertex Shader
+
+	// Vertex Shader
 	const GLchar* perfragment_vertexShaderSourceCode =
 		"#version 460 core"
 		"\n"
@@ -743,7 +1051,7 @@ int initialize(void)
 				szinfolog = NULL;
 			}
 		}
-		uninitialize();
+		uninitialize_sphere();
 	}
 
 	// fragment shader
@@ -814,43 +1122,43 @@ int initialize(void)
 				szinfolog = NULL;
 			}
 		}
-		uninitialize();
+		uninitialize_sphere();
 	}
 
 	// shader program
-	perfragment_shaderProgramObject = glCreateProgram();
+	perfragment_shaderProgramObject_sphere = glCreateProgram();
 
-	glAttachShader(perfragment_shaderProgramObject, perfragment_vertexShaderObject);
-	glAttachShader(perfragment_shaderProgramObject, perfragment_fragmentShaderObject);
+	glAttachShader(perfragment_shaderProgramObject_sphere, perfragment_vertexShaderObject);
+	glAttachShader(perfragment_shaderProgramObject_sphere, perfragment_fragmentShaderObject);
 
 	// prelinking
-	glBindAttribLocation(perfragment_shaderProgramObject, AMC_ATTRIBUTE_POSITION, "aPosition");
-	glBindAttribLocation(perfragment_shaderProgramObject, AMC_ATTRIBUTE_NORMAL, "aNormal");
+	glBindAttribLocation(perfragment_shaderProgramObject_sphere, AMC_ATTRIBUTE_POSITION, "aPosition");
+	glBindAttribLocation(perfragment_shaderProgramObject_sphere, AMC_ATTRIBUTE_NORMAL, "aNormal");
 
-	glLinkProgram(perfragment_shaderProgramObject);
+	glLinkProgram(perfragment_shaderProgramObject_sphere);
 
 	status = 0;
 	infoLogLength = 0;
 	szinfolog = NULL;
 
-	glGetProgramiv(perfragment_shaderProgramObject, GL_LINK_STATUS, &status);
+	glGetProgramiv(perfragment_shaderProgramObject_sphere, GL_LINK_STATUS, &status);
 	if (status == GL_FALSE)
 	{
-		glGetProgramiv(perfragment_shaderProgramObject, GL_INFO_LOG_LENGTH, &infoLogLength);
+		glGetProgramiv(perfragment_shaderProgramObject_sphere, GL_INFO_LOG_LENGTH, &infoLogLength);
 		if (infoLogLength > 0)
 		{
 			szinfolog = (GLchar*)malloc(infoLogLength);
 			if (szinfolog != NULL)
 			{
-				glGetProgramInfoLog(perfragment_shaderProgramObject, infoLogLength, NULL, szinfolog);
+				glGetProgramInfoLog(perfragment_shaderProgramObject_sphere, infoLogLength, NULL, szinfolog);
 				fprintf(gpFILE, "Shader Program linking error log: %s\n", szinfolog);
 				free(szinfolog);
 				szinfolog = NULL;
 			}
 		}
-		uninitialize();
+		uninitialize_sphere();
 	}
-	
+
 	float sphere_positons[1146];
 	float sphere_normals[1146];
 	float sphere_texcoords[764];
@@ -860,9 +1168,9 @@ int initialize(void)
 	light[1].ambient = vec3(0.0f, 0.0f, 0.0f);
 	light[2].ambient = vec3(0.0f, 0.0f, 0.0f);
 
-	light[0].diffuse = vec3(1.0f, 0.0f, 0.0f); // REd Light Source
+	light[0].diffuse = vec3(1.0f, 0.0f, 0.0f); // Red Light Source
 	light[1].diffuse = vec3(0.0f, 1.0f, 0.0f); // Blue Light Source
-	light[2].diffuse = vec3(0.0f, 0.0f, 1.0f); //Green Light 
+	light[2].diffuse = vec3(0.0f, 0.0f, 1.0f); // Green Light Source
 
 	light[0].specular = vec3(1.0f, 1.0f, 1.0f);
 	light[1].specular = vec3(1.0f, 1.0f, 1.0f);
@@ -922,261 +1230,242 @@ int initialize(void)
 	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 
 	// initialise
-	perspectiveProjetionMatrix = vmath::mat4::identity();
+	perspectiveProjetionMatrix_sphere = vmath::mat4::identity();
 
-	resize(WIN_WIDTH, WIN_HEIGHT);
+	resize_sphere(WIN_WIDTH, WIN_HEIGHT);
 	// here opengl starts
+
+	// FBO related code 
+	if (createFBO(FBO_WIDTH, FBO_HEIGHT) == TRUE)
+	{
+		bFBOResult = initialize_sphere(FBO_WIDTH, FBO_HEIGHT);
+	}
+	else
+	{
+		fprintf(gpfile, "create FBO Failed");
+		return(false);
+	}
+
 	return (0);
 }
 
-void printgGLInfo(void)
+BOOL createFBO(GLint textureWidth, GLint textureHeight)
 {
-	// variable declaratios
-	GLint numExtensions;
-	GLint i;
+	// 1-check capacity of render buffer
+	GLint maxRenderBufferSize;
+	
+	glGetIntegerv(enum GL_MAX_RENDERBUFFER_SIZE, &maxRenderBufferSize);
 
-	// code
-	fprintf(gpFILE, "OpenGL Vendor : %s\n", glGetString(GL_VENDOR));
-	fprintf(gpFILE, "OpenGL Renderer : %s\n", glGetString(GL_RENDERER));
-	fprintf(gpFILE, "OpenGL Version : %s\n", glGetString(GL_VERSION));
-	fprintf(gpFILE, "OpenGL GLSL Version : %s\n", glGetString(GL_SHADING_LANGUAGE_VERSION));
-	fprintf(gpFILE, "-------------------------------------------\n");
-	// listing of supported extensions
-	glGetIntegerv(GL_NUM_EXTENSIONS, &numExtensions);
-
-	for (i = 0; i < numExtensions; i++)
+	if (maxRenderBufferSize < textureWidth || maxRenderBufferSize < textureHeight)
 	{
-		fprintf(gpFILE, "%s\n", glGetStringi(GL_EXTENSIONS, i));
+		fprintf(gpfile, "Texture size overflow\n");
+		return(false);
 	}
-	fprintf(gpFILE, "-------------------------------------------\n");
+
+	// create custom frame buffer
+	glGenFramebuffers(1, &FBO);
+	glBindFramebuffer(gl_framebuffer, FBO);
+
+	// create texture for fbo in which we are going to render the sphere
+	glGenTextures(1, &textureFBO);
+	glBindTexture(GL_TEXTURE_2D, textureFBO);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, textureWidth, textureHeight, 0, GL_RGB, GL_UNSIGNED_SHORT_5_6_5, NULL);
+	
+	// attach above texture to frmebuffer at default color attachment 0
+	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, textureFBO, 0);
+
+	// now create render buffer to depth 
+	glGenRenderBuffers(1, &RBO);
+	glBindRenderBuffer(GL_RENDERBUFFER, RBO);
+
+	// set the storage of above render buffer of texture size for depth
+	glRenderBufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT16, textureWidth, textureHeight);
+
+	// attach aboce depth related render buffer to FBO at depth attachment
+	glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, RBO);
+
+	// check the framebuffer status whether successful or not
+	GLenum result = glCheckFramebufferStatus(GL_FRAMEBUFFER);
+
+	if (result != GL_FRAMEBUFFER_COMPLETE)
+	{
+		fprintf(gpfile, "framebuffer status is not complete");
+		return(false);
+	}
+
+	glBindFrameBuffer(GL_FRAMEBUFFER, 0);
+	return(true);
+
 }
 
-void resize(int width, int height)
+void resize_cube(int width, int height)
+{
+	// Code
+	if (height <= 0)
+		height = 1;
+
+	WIN_WIDTH = width;
+	WIN_HEIGHT = height;
+	
+	glViewport(0, 0, (GLsizei)width, (GLsizei)height); // 0x to 0y, total Width and Height of my window, binoculars
+
+	// Set perspective projection matrix
+	perspectiveProjectionMatrix_cube = vmath::perspective(45.0f, (GLfloat)width / (GLfloat)height, 0.1f, 100.0f);
+
+}
+
+void resize_sphere(int width, int height)
 {
 	// code
 	if (height <= 0)
 		height = 1;
 
-	// resize
+	// resize_sphere
 	glViewport(0, 0, (GLsizei)width, (GLsizei)height);
 
 	// set perspective projection matrix
-	perspectiveProjetionMatrix = vmath::perspective(45.0f, (GLfloat)width / (GLfloat)height, 0.1f, 100.0f);
+	perspectiveProjetionMatrix_sphere = vmath::perspective(45.0f, (GLfloat)width / (GLfloat)height, 0.1f, 100.0f);
 }
 
-void display(void)
-{
-	// code
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+void display_cube(void)
+{	
+	void display_sphere(GLint, GLint);
 
+	// Code
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // Depth-Buffer Added For 3D(Depth)
+		
+	glUseProgram(shaderProgramObject_cube);
+
+	//transformation matrix
 
 	vmath::mat4 modelViewMatrix = vmath::mat4::identity();
+	vmath::mat4 translationMatrix = vmath::translate(-1.5f, 0.0f, -6.0f);
 
-	mat4 translationmatrix = mat4::identity();
+	mat4 rotationMatrix = mat4::identity();
+	//rotationMatrix = vmath::rotate(fAnglePyramid, 0.0f, 1.0f, 0.0f);
+	modelViewMatrix = translationMatrix * rotationMatrix;
 
-	mat4 rotationmatrix = mat4::identity();
+	vmath::mat4 modelViewProjectionMatrix = vmath::mat4::identity(); //order of multiplication is v.imp in matrix multiplication
+	modelViewProjectionMatrix = perspectiveProjectionMatrix_cube * modelViewMatrix;
+	
+	// Cube
+	//transformation matrix
+	translationMatrix = vmath::translate(0.4f, 0.0f, -6.0f);
 
-	mat4 scalematrix = mat4::identity();
+	mat4 scaleMatrix = mat4::identity();
+	scaleMatrix = vmath::scale(0.75f, 0.75f, 0.75f);
 
-	// transformation
-	// sphere
-	translationmatrix = vmath::translate(0.0f, 0.0f, -3.0f);
+	rotationMatrix = vmath::rotate(fAngleCube, 1.0f, 0.0f, 0.0f);
+	mat4 rotationMatrix1 = vmath::rotate(fAngleCube, 1.0f, 0.0f, 0.0f);
+	mat4 rotationMatrix2 = vmath::rotate(fAngleCube, 0.0f, 1.0f, 0.0f);
+	mat4 rotationMatrix3 = vmath::rotate(fAngleCube, 0.0f, 0.0f, 1.0f);
 
-	//view matrix
-	vmath::mat4 viewMatrix = vmath::mat4::identity();
-	// Model Matrix
-	vmath::mat4 modelMatrix = translationmatrix;
+	rotationMatrix = rotationMatrix1 * rotationMatrix2 * rotationMatrix3;
+	modelViewMatrix = translationMatrix * scaleMatrix * rotationMatrix;
 
-	if (chosenShader == 'v')
-	{
-		glUseProgram(pervertex_shaderProgramObject);
-	}
-	else if (chosenShader == 'f')
-	{
-		glUseProgram(perfragment_shaderProgramObject);
-	}
+	modelViewProjectionMatrix = vmath::mat4::identity();
+	modelViewProjectionMatrix = perspectiveProjectionMatrix_cube * modelViewMatrix; //order of multiplication is v.imp in matrix multiplication
+	
+	// push above mvp into veretex shader's mvp uniform
+	glUniformMatrix4fv(mvpMatrixUniform_cube, 1, GL_FALSE, modelViewProjectionMatrix);
 
-	// push above mvp into vertex shaders mvpuniform
-	glUniformMatrix4fv(modelMatrixUniform, 1, GL_FALSE, modelMatrix);
-	glUniformMatrix4fv(modelViewMatrixUniform, 1, GL_FALSE, viewMatrix);
-	glUniformMatrix4fv(projectionMatrixUniform, 1, GL_FALSE, perspectiveProjetionMatrix);
+	//For Texture
+	glActiveTexture(GL_TEXTURE0);
+	//glBindTexture(GL_TEXTURE_2D, texture_kundali);
+	glUniform1i(textureSamplerUniform_cube, 0);
 
-	if (bLightingEnabled == TRUE)
-	{
-		glUniform1i(keyPressUniform, 1);
-		glUniform3fv(lightAmbientUniform[0], 1, light[0].ambient);
-		glUniform3fv(lightDiffuseUniform[0], 1, light[0].diffuse);
-		glUniform3fv(lightSpecularUniform[0], 1, light[0].specular);
-		glUniform4fv(lightPositionUniform[0], 1, light[0].position);
+	glBindVertexArray(vao_cube);
 
-		glUniform3fv(lightAmbientUniform[1], 1, light[1].ambient);
-		glUniform3fv(lightDiffuseUniform[1], 1, light[1].diffuse);
-		glUniform3fv(lightSpecularUniform[1], 1, light[1].specular);
-		glUniform4fv(lightPositionUniform[1], 1, light[1].position);
+	glDrawArrays(GL_TRIANGLE_FAN, 0, 4);
+	glDrawArrays(GL_TRIANGLE_FAN, 4, 4);
+	glDrawArrays(GL_TRIANGLE_FAN, 8, 4);
+	glDrawArrays(GL_TRIANGLE_FAN, 12, 4);
+	glDrawArrays(GL_TRIANGLE_FAN, 16, 4);
+	glDrawArrays(GL_TRIANGLE_FAN, 20, 4);
 
-		glUniform3fv(lightAmbientUniform[2], 1, light[2].ambient);
-		glUniform3fv(lightDiffuseUniform[2], 1, light[2].diffuse);
-		glUniform3fv(lightSpecularUniform[2], 1, light[2].specular);
-		glUniform4fv(lightPositionUniform[2], 1, light[2].position);
-
-		glUniform3fv(materialAmbientUniform, 1, materialAmbient);
-		glUniform3fv(materialDiffuseUniform, 1, materialDiffuse);
-		glUniform3fv(materialSpecularUniform, 1, materialSpecular);
-		glUniform1f(materialShininessUniform, materialShininess);
-	}
-	else
-	{
-		glUniform1i(keyPressUniform, 0);
-	}
-
-	// *** bind vao ***
-	glBindVertexArray(vao_sphere);
-
-	// *** draw, either by glDrawTriangles() or glDrawArrays() or glDrawElements()
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, vbo_sphere_element);
-	glDrawElements(GL_TRIANGLES, gNumElements, GL_UNSIGNED_SHORT, 0);
-
-	// *** unbind vao ***
 	glBindVertexArray(0);
 
 	glUseProgram(0);
 
-
-
 	SwapBuffers(ghdc);
 }
 
-void update(void)
+void update_cube(void)
 {
-	// code
-	my_angle += 0.005f;
+	// Code
+	fAngleCube = fAngleCube - 0.1f;
+	if (fAngleCube <= 0.2f)
+	{
+		fAngleCube = fAngleCube + 360.0f;
+	}
 
-	light[0].position[0] = 5.0f * cos(my_angle) + 5.0f * sin(my_angle);
-	light[0].position[1] = 0.0f;
-	light[0].position[2] = 5.0f * cos(my_angle) - 5.0f * sin(my_angle);
-	light[0].position[3] = 1.0f;
-
-	light[1].position[0] = 0.0f;
-	light[1].position[1] = 5.0f * cos(my_angle) + 5.0f * sin(my_angle);
-	light[1].position[2] = 5.0f * cos(my_angle) - 5.0f * sin(my_angle);
-	light[1].position[3] = 1.0f;
-
-	light[2].position[0] = 5.0f * cos(my_angle) + 5.0f * sin(my_angle);
-	light[2].position[1] = 5.0f * cos(my_angle) - 5.0f * sin(my_angle);
-	light[2].position[2] = 0.0f;
-	light[2].position[3] = 1.0f;
-
+	void update_sphere(void);
+	
 }
 
-void uninitialize(void)
+void uninitialize_cube(void)
 {
-	// fucntion declarations
+	// Function Declarations
 	void ToggleFullScreen(void);
 
-	// code
-	if (perfragment_shaderProgramObject)
+	// Code
+	if (shaderProgramObject_cube)
 	{
-		glUseProgram(perfragment_shaderProgramObject);
+		glUseProgram(shaderProgramObject_cube);
 
 		GLint numShaders = 0;
-		glGetProgramiv(perfragment_shaderProgramObject, GL_ATTACHED_SHADERS, &numShaders);
-
+		glGetProgramiv(shaderProgramObject_cube, GL_ATTACHED_SHADERS, &numShaders);
 		if (numShaders > 0)
 		{
 			GLuint* pShaders = (GLuint*)malloc(numShaders * sizeof(GLuint));
 			if (pShaders != NULL)
 			{
-				glGetAttachedShaders(perfragment_shaderProgramObject, numShaders, NULL, pShaders);
+				glGetAttachedShaders(shaderProgramObject_cube, numShaders, NULL, pShaders);
 				for (GLint i = 0; i < numShaders; i++)
 				{
-					glDetachObjectARB(perfragment_shaderProgramObject, pShaders[i]);
+					glDetachObjectARB(shaderProgramObject_cube, pShaders[i]);
 					glDeleteShader(pShaders[i]);
 					pShaders[i] = 0;
 				}
 				free(pShaders);
 				pShaders = NULL;
 			}
+		
+			glUseProgram(0);
+			glDeleteProgram(shaderProgramObject_cube);
 		}
-		glUseProgram(0);
-		glDeleteProgram(perfragment_shaderProgramObject);
-		perfragment_shaderProgramObject = 0;
-	}
 
-	if (pervertex_shaderProgramObject)
-	{
-		glUseProgram(pervertex_shaderProgramObject);
-
-		GLint numShaders = 0;
-		glGetProgramiv(pervertex_shaderProgramObject, GL_ATTACHED_SHADERS, &numShaders);
-
-		if (numShaders > 0)
+		// Cube
+			
+		//delete vbo of positoion
+		if (vbo_position_cube)
 		{
-			GLuint* pShaders = (GLuint*)malloc(numShaders * sizeof(GLuint));
-			if (pShaders != NULL)
-			{
-				glGetAttachedShaders(pervertex_shaderProgramObject, numShaders, NULL, pShaders);
-				for (GLint i = 0; i < numShaders; i++)
-				{
-					glDetachObjectARB(pervertex_shaderProgramObject, pShaders[i]);
-					glDeleteShader(pShaders[i]);
-					pShaders[i] = 0;
-				}
-				free(pShaders);
-				pShaders = NULL;
-			}
+			glDeleteBuffers(1, &vbo_position_cube);
+			vbo_position_cube = 0;
 		}
-		glUseProgram(0);
-		glDeleteProgram(pervertex_shaderProgramObject);
-		pervertex_shaderProgramObject = 0;
-	}
 
-	// sphere
-	if (vbo_sphere_element)
-	{
-		glDeleteBuffers(1, &vbo_sphere_element);
-		vbo_sphere_element = 0;
+		//delete vao
+		if (vao_cube)
+		{
+			glDeleteVertexArrays(1, &vao_cube);
+			vao_cube = 0;
+		}
 	}
-
-	if (vbo_sphere_texcoord)
-	{
-		glDeleteBuffers(1, &vbo_sphere_texcoord);
-		vbo_sphere_texcoord = 0;
-	}
-
-	if (vbo_sphere_normal)
-	{
-		glDeleteBuffers(1, &vbo_sphere_normal);
-		vbo_sphere_normal = 0;
-	}
-
-	// delete vbo of positoion
-	if (vbo_sphere_position)
-	{
-		glDeleteBuffers(1, &vbo_sphere_position);
-		vbo_sphere_position = 0;
-	}
-
-	// delete vao
-	if (vao_sphere)
-	{
-		glDeleteVertexArrays(1, &vao_sphere);
-		vao_sphere = 0;
-	}
-
-	// if application is exiting in fullscreen
+	// if application is exitting in FullScreen
 	if (gbFullscreen == TRUE)
-	{
 		ToggleFullScreen();
-		gbFullscreen = FALSE;
-	}
 
-	// make the hdc as current context
+	// make the hdc as Currentdc
 	if (wglGetCurrentContext() == ghrc)
 	{
 		wglMakeCurrent(NULL, NULL);
 	}
 
-	// Delete rendering context
+	// Destroy Rendering Context
 	if (ghrc)
 	{
 		wglDeleteContext(ghrc);
@@ -1189,22 +1478,32 @@ void uninitialize(void)
 		ReleaseDC(ghwnd, ghdc);
 		ghdc = NULL;
 	}
-
-	// DestroyWindow
+	
+	// Destroy window
 	if (ghwnd)
 	{
-		fclose(stdout);
-		FreeConsole();
-
 		DestroyWindow(ghwnd);
 		ghwnd = NULL;
 	}
 
-	// close the log file
-	if (gpFILE)
+	if (texture_kundali)
 	{
-		fprintf(gpFILE, "Program Ended Successfully...\n");
-		fclose(gpFILE);
-		gpFILE = NULL;
+		glDeleteTextures(1, &texture_kundali);
+		texture_kundali = 0;
+	}
+
+	if (vbo_texcoord_cube)
+	{
+		glDeleteBuffers(1, &vbo_texcoord_cube);
+		vbo_texcoord_cube = 0;
+	}
+
+	// Close The LogFile
+	if (gpfile)
+	{
+		fprintf(gpfile, "Program Ended Successfully");
+		fclose(gpfile);
+		gpfile = NULL;
 	}
 }
+

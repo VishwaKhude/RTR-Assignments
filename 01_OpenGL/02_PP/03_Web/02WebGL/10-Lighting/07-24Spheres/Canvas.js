@@ -192,7 +192,7 @@ function initialise()
     }
     else
     {
-        console.log("getting webgl2 context successeded");
+        console.log("getting webgl2 context succeeded");
     }
     
     //set webgl2 context view width and view height properties

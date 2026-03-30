@@ -116,7 +116,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmdLi
 	WNDCLASSEX wndclass;
 	HWND hwnd;
 	MSG msg;
-	TCHAR szAppName[] = TEXT(" VMKWindow ");
+	TCHAR szAppName[] = TEXT("VMKWindow");
 
 	int iResult = 0;
 
@@ -137,13 +137,6 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmdLi
 	// code
 	//	gpFILE = fopen("Log.txt", "w");
 	//	fopen_s
-	if (!AttachConsole(ATTACH_PARENT_PROCESS))
-	{
-		AllocConsole();
-	}
-	freopen("CONOUT$", "w", stdout);
-	std::cout << "Log On Console" << std::endl;
-
 	if (fopen_s(&gpFILE, "Log.txt", "w") != 0)
 	{
 		MessageBox(NULL, TEXT("Log File Cannot Be Opend"), TEXT("Error"), MB_OK | MB_ICONERROR);
@@ -262,6 +255,16 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lParam)
 		switch (LOWORD(wParam))
 		{
 		case VK_ESCAPE:
+			
+		}
+		break;
+
+	case WM_CHAR:
+		switch (LOWORD(wParam))
+		{
+
+		case 'S':
+		case 's':
 			if (gbFullscreen == FALSE)
 			{
 				ToggleFullScreen();
@@ -272,14 +275,8 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lParam)
 				ToggleFullScreen();
 				gbFullscreen = FALSE;
 			}
-
 			break;
-		}
-		break;
 
-	case WM_CHAR:
-		switch (LOWORD(wParam))
-		{
 		case 'V':
 		case 'v':
 			if (bLightingEnabled == TRUE)

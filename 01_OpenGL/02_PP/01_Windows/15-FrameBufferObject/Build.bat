@@ -1,6 +1,6 @@
 cls
 
-cl.exe /I..\..\include /c /EHsc OGL.cpp
+cl.exe /I..\include /c /EHsc OGL.cpp
 
 rc.exe ogl.rc
 

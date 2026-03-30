@@ -69,7 +69,7 @@ function main()
         console.log("Getting Canvas Failed !!!\n");
 
     else
-        console.log("Getting Canvas Successeded !!!\n");
+        console.log("Getting Canvas Succeeded !!!\n");
 
     // Set Canvas width and height for future use
     canvas_original_width = canvas.width;

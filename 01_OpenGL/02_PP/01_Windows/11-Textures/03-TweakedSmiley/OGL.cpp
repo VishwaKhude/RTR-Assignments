@@ -80,7 +80,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmdLi
 	WNDCLASSEX wndclass;
 	HWND hwnd;
 	MSG msg;
-	TCHAR szAppName[] = TEXT(" ABCWindow ");
+	TCHAR szAppName[] = TEXT(" VMKWindow ");
 
 	int iResult = 0;
 
